@@ -51,6 +51,7 @@ export default function RoomDetail() {
         location: data.address || 'Location TBA',
         price: `$${data.price}`,
         descriptionTitle: data.title,
+        description: data.description || '',
         descriptionPrice: `$${data.price}/month`,
         stats: [
           { value: data.beds || '1', label: data.beds === 1 ? 'Bed' : 'Beds' },

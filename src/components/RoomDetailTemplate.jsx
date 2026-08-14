@@ -222,6 +222,10 @@ export default function RoomDetailTemplate({ data }) {
                    <p><strong><i className="fa-solid fa-fire" style={{ color: '#ff4e31', marginRight: '5px' }} /> {data.descriptionTitle}</strong></p>
                    <p className="rd-desc-price">Rental Price: <strong>{data.descriptionPrice}</strong> <em>(Negotiable)</em></p>
 
+                   {data.description && (
+                     <p className="rd-desc-text">{data.description}</p>
+                   )}
+
                    <div className="rd-details-grid">
                      <div className="rd-details-column">
                        <h4><i className="fa-solid fa-building" /> Property Details</h4>
