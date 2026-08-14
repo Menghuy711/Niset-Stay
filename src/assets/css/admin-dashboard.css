@@ -2220,3 +2220,190 @@ body {
     margin-bottom: 2px;
   }
 }
+
+/* ========== DELETE CONFIRM MODAL ========== */
+.admin-delete-modal {
+  max-width: 440px;
+  overflow: visible;
+}
+
+.admin-delete-body {
+  padding: 32px 32px 16px;
+  text-align: center;
+}
+
+.admin-delete-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  background: #fef2f2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #dc2626;
+}
+
+.admin-delete-icon .material-symbols-rounded {
+  font-size: 32px;
+}
+
+.admin-delete-body h2 {
+  margin: 0 0 20px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.admin-delete-room-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.admin-delete-room-image {
+  width: 72px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.admin-delete-room-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-delete-room-details strong {
+  font-size: 15px;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-delete-room-details span {
+  font-size: 13px;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-delete-room-details .admin-delete-room-price {
+  font-weight: 600;
+  color: #7c3aed;
+}
+
+.admin-delete-warning {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.admin-delete-modal .admin-error {
+  margin: 16px 0 0;
+}
+
+.admin-delete-modal .admin-modal-footer {
+  padding: 16px 32px;
+  justify-content: center;
+}
+
+.admin-btn-danger {
+  background: #dc2626;
+  border: none;
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.admin-btn-danger:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 12px -3px rgba(220, 38, 38, 0.4);
+}
+
+.admin-btn-danger:active {
+  transform: translateY(0);
+}
+
+.admin-btn-danger:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.admin-btn-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ========== TOAST ========== */
+.admin-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2000;
+  background: #16a34a;
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 24px -6px rgba(22, 163, 74, 0.5);
+  animation: toastIn 0.3s ease-out;
+}
+
+.admin-toast .material-symbols-rounded {
+  font-size: 20px;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .admin-delete-modal .admin-modal-footer {
+    flex-direction: column;
+  }
+
+  .admin-delete-modal .admin-btn-secondary,
+  .admin-delete-modal .admin-btn-danger {
+    width: 100%;
+  }
+}

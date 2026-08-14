@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import AdminRoomModal from '../../components/admin/AdminRoomModal.jsx';
+import AdminDeleteModal from '../../components/admin/AdminDeleteModal.jsx';
 import AdminNavbar from '../../components/admin/AdminNavbar.jsx';
 import AdminFooter from '../../components/admin/AdminFooter.jsx';
 import '../../assets/css/admin-dashboard.css';
@@ -24,6 +25,9 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingRoom, setEditingRoom] = useState(null);
+  const [deletingRoom, setDeletingRoom] = useState(null);
+  const [toast, setToast] = useState('');
+  const toastTimerRef = useRef(null);
   const [stats, setStats] = useState({
     totalRooms: 0,
     totalBookings: 0,
@@ -38,7 +42,14 @@ export default function AdminDashboard() {
     } else {
       fetchBookings();
     }
+    return () => clearTimeout(toastTimerRef.current);
   }, [activeTab]);
+
+  const showToast = (message) => {
+    setToast(message);
+    clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setToast(''), 3000);
+  };
 
   const fetchStats = async () => {
     // Fetch total rooms
@@ -103,12 +114,17 @@ export default function AdminDashboard() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this room?')) return;
-    const { error } = await supabase.from('rooms').delete().eq('id', id);
-    if (!error) {
-      fetchRooms();
-    }
+  const handleDeleteClick = (room) => {
+    setDeletingRoom(room);
+  };
+
+  const confirmDelete = async (room) => {
+    const { error } = await supabase.from('rooms').delete().eq('id', room.id);
+    if (error) throw error;
+    setDeletingRoom(null);
+    fetchRooms();
+    fetchStats();
+    showToast(`Room "${room.title}" was deleted`);
   };
 
   const handleRoomSaved = () => {
@@ -295,7 +311,7 @@ export default function AdminDashboard() {
                             </button>
                             <button 
                               className="btn-icon btn-delete" 
-                              onClick={() => handleDelete(room.id)}
+                              onClick={() => handleDeleteClick(room)}
                               title="Delete"
                             >
                               <span className="material-symbols-rounded">delete</span>
@@ -431,6 +447,21 @@ export default function AdminDashboard() {
           onSave={handleRoomSaved}
           onClose={() => setShowModal(false)}
         />
+      )}
+
+      {deletingRoom && (
+        <AdminDeleteModal
+          room={deletingRoom}
+          onConfirm={confirmDelete}
+          onClose={() => setDeletingRoom(null)}
+        />
+      )}
+
+      {toast && (
+        <div className="admin-toast" role="status">
+          <span className="material-symbols-rounded">check_circle</span>
+          {toast}
+        </div>
       )}
     </>
   );
