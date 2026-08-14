@@ -5,6 +5,17 @@
     <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- SPA redirect restore (GitHub Pages) -->
+    <script>
+      (function () {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.href) {
+          history.replaceState(null, null, redirect);
+        }
+      })();
+    </script>
+
     <!-- primary meta tags -->
     <title>Niset Stay</title>
     <meta name="title" content="Niset Stay" />
