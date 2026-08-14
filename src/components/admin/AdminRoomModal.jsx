@@ -440,12 +440,17 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
             <button
               type="submit"
               className="admin-btn-primary"
-              disabled={loading}
+              disabled={loading || uploading}
             >
               {loading ? (
                 <span className="admin-btn-loading">
                   <i className="fa-solid fa-spinner fa-spin" />
                   <span>Creating Room...</span>
+                </span>
+              ) : uploading ? (
+                <span className="admin-btn-loading">
+                  <i className="fa-solid fa-spinner fa-spin" />
+                  <span>Uploading...</span>
                 </span>
               ) : room ? (
                 <span>

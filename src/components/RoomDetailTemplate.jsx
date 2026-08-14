@@ -11,6 +11,8 @@ const propertyImages = import.meta.glob('../assets/images/property-*.jpg', {
 });
 
 function resolveImage(filename) {
+  if (!filename) return '';
+  if (/^(https?:|blob:|data:|file:)/.test(filename)) return filename;
   const match = Object.entries(propertyImages).find(([path]) => path.endsWith(`/${filename}`));
   return match ? match[1] : '';
 }
