@@ -1332,6 +1332,7 @@ body {
 }
 
 .admin-upload-zone {
+  position: relative;
   border: 2px dashed #e5e7eb;
   border-radius: 12px;
   padding: 28px 20px;
@@ -1341,7 +1342,8 @@ body {
   background: #fff;
 }
 
-.admin-upload-zone:hover {
+.admin-upload-zone:hover,
+.admin-upload-zone.dragging {
   border-color: #6366f1;
   background: #f9fafb;
 }

@@ -385,7 +385,20 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
                     </div>
                   </div>
                 ) : (
-                  <div className={`admin-upload-zone${uploading ? ' uploading' : ''}`}>
+                  <div
+                    className={`admin-upload-zone${uploading ? ' uploading' : ''}`}
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('dragging'); }}
+                    onDragLeave={(e) => { e.currentTarget.classList.remove('dragging'); }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.remove('dragging');
+                      const file = e.dataTransfer.files?.[0];
+                      if (file) {
+                        handleImageUpload({ target: { files: [file] } });
+                      }
+                    }}
+                  >
                     {uploading ? (
                       <div className="admin-upload-loading">
                         <i className="fa-solid fa-spinner fa-spin" />
