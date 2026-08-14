@@ -1374,6 +1374,28 @@ body {
   color: #9ca3af;
 }
 
+.admin-upload-zone.uploading {
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.admin-upload-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #6366f1;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 0;
+}
+
+.admin-upload-loading i {
+  display: inline-block;
+  margin: 0;
+  font-size: 20px;
+}
 .admin-file-input {
   position: absolute;
   width: 1px;

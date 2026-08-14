@@ -27,6 +27,7 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
   const [badge, setBadge] = useState('');
   const [mapQuery, setMapQuery] = useState('');
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const [previewImage, setPreviewImage] = useState('');
   const fileInputRef = useRef(null);
@@ -51,26 +52,55 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
     }
   }, [room]);
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setError('Image size must be under 5MB');
-        return;
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size must be under 5MB');
+      return;
+    }
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+      setError('Please upload PNG, JPG or WEBP images only');
+      return;
+    }
+
+    setUploading(true);
+    setError('');
+
+    try {
+      const fileExt = (file.name.split('.').pop() || 'png').toLowerCase();
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('room-images')
+        .upload(fileName, file, { upsert: false });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('room-images')
+        .getPublicUrl(fileName);
+
+      setPreviewImage(publicUrl);
+      setImageUrl(publicUrl);
+    } catch (err) {
+      setError(err.message || 'Upload failed. Please try again.');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
       }
-      if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-        setError('Please upload PNG, JPG or WEBP images only');
-        return;
-      }
-      
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewImage(objectUrl);
-      setImageUrl(objectUrl);
-      setError('');
     }
   };
 
-  const handleRemoveImage = () => {
+  const handleRemoveImage = async () => {
+    if (imageUrl && imageUrl.includes('/storage/v1/object/public/')) {
+      const path = imageUrl.split('/room-images/')[1];
+      if (path) {
+        await supabase.storage.from('room-images').remove([path]);
+      }
+    }
     setPreviewImage('');
     setImageUrl('');
     if (fileInputRef.current) {
@@ -355,20 +385,29 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
                     </div>
                   </div>
                 ) : (
-                  <div className="admin-upload-zone">
-                    <i className="fa-solid fa-cloud-arrow-up" />
-                    <div className="admin-upload-text">
-                      <span className="admin-upload-label">Upload room image</span>
-                      <span className="admin-upload-sublabel">PNG, JPG or WEBP up to 5MB</span>
-                      <span className="admin-upload-hint">Click to upload or drag and drop</span>
-                    </div>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleImageUpload}
-                      accept="image/png,image/jpeg,image/webp"
-                      className="admin-file-input"
-                    />
+                  <div className={`admin-upload-zone${uploading ? ' uploading' : ''}`}>
+                    {uploading ? (
+                      <div className="admin-upload-loading">
+                        <i className="fa-solid fa-spinner fa-spin" />
+                        <span>Uploading image...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-cloud-arrow-up" />
+                        <div className="admin-upload-text">
+                          <span className="admin-upload-label">Upload room image</span>
+                          <span className="admin-upload-sublabel">PNG, JPG or WEBP up to 5MB</span>
+                          <span className="admin-upload-hint">Click to upload or drag and drop</span>
+                        </div>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          onChange={handleImageUpload}
+                          accept="image/png,image/jpeg,image/webp"
+                          className="admin-file-input"
+                        />
+                      </>
+                    )}
                   </div>
                 )}
               </div>
