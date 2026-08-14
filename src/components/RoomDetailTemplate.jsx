@@ -230,25 +230,25 @@ export default function RoomDetailTemplate({ data }) {
                      <div className="rd-details-column">
                        <h4><i className="fa-solid fa-building" /> Property Details</h4>
                        <ul>
-                         <li><i className="fa-solid fa-check" /> House Size: 4m × 4m</li>
-                         <li><i className="fa-solid fa-check" /> Land Size: 4m × 4m</li>
-                         <li><i className="fa-solid fa-check" /> Bedrooms: 1</li>
-                         <li><i className="fa-solid fa-check" /> Bathrooms: 1</li>
-                         <li><i className="fa-solid fa-check" /> Fully Furnished</li>
-                         <li><i className="fa-solid fa-check" /> Air Conditioner</li>
-                         <li><i className="fa-solid fa-check" /> Free WiFi</li>
-                         <li><i className="fa-solid fa-check" /> Water Supply Included</li>
-                         <li><i className="fa-solid fa-check" /> Parking Available</li>
-                         <li><i className="fa-solid fa-check" /> 24/7 Security</li>
+                         <li><i className="fa-solid fa-check" /> Bedrooms: {data.stats[0].value}</li>
+                         <li><i className="fa-solid fa-check" /> Bathrooms: {data.stats[1].value}</li>
+                         <li><i className="fa-solid fa-check" /> Area: {data.stats[3].value} m²</li>
+                         {data.amenities && data.amenities.length > 0 ? (
+                           data.amenities.map((a, i) => (
+                             <li key={i}><i className="fa-solid fa-check" /> {a}</li>
+                           ))
+                         ) : (
+                           <li><i className="fa-solid fa-check" /> Fully Furnished</li>
+                         )}
                        </ul>
                      </div>
                      <div className="rd-details-column">
                        <h4><i className="fa-solid fa-file-contract" /> Rental Conditions</h4>
                        <ul>
-                         <li><i className="fa-solid fa-check" /> Contract: 1 Year</li>
-                         <li><i className="fa-solid fa-check" /> Deposit: 2 Months</li>
-                         <li><i className="fa-solid fa-xmark rd-icon-warn" /> No Pets Allowed</li>
-                         <li><i className="fa-solid fa-bolt" /> Electricity Paid Separately</li>
+                         <li><i className="fa-solid fa-check" /> Contract: {data.contractTerms || '1 Year'}</li>
+                         <li><i className="fa-solid fa-check" /> Deposit: {data.depositTerms || '2 Months'}</li>
+                         <li><i className={`fa-solid ${data.petPolicy && data.petPolicy.toLowerCase().includes('no') ? 'fa-xmark rd-icon-warn' : 'fa-check'}`} /> {data.petPolicy || 'No Pets Allowed'}</li>
+                         <li><i className="fa-solid fa-bolt" /> {data.utilitiesTerms || 'Electricity Paid Separately'}</li>
                        </ul>
                      </div>
                    </div>

@@ -69,6 +69,10 @@ export default function RoomDetail() {
         ownerPhone: data.owner_phone || '',
         ownerEmail: data.owner_email || '',
         ownerTelegram: data.owner_telegram || '',
+        contractTerms: data.contract_terms || '',
+        depositTerms: data.deposit_terms || '',
+        petPolicy: data.pet_policy || '',
+        utilitiesTerms: data.utilities_terms || '',
       };
 
       setRoomData(mappedData);

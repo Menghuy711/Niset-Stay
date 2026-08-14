@@ -45,6 +45,10 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
   const [ownerEmail, setOwnerEmail] = useState('');
   const [ownerTelegram, setOwnerTelegram] = useState('');
   const [amenities, setAmenities] = useState([]);
+  const [contractTerms, setContractTerms] = useState('');
+  const [depositTerms, setDepositTerms] = useState('');
+  const [petPolicy, setPetPolicy] = useState('');
+  const [utilitiesTerms, setUtilitiesTerms] = useState('');
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -69,6 +73,10 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
       setOwnerEmail(room.owner_email || '');
       setOwnerTelegram(room.owner_telegram || '');
       setAmenities(room.amenities || []);
+      setContractTerms(room.contract_terms || '');
+      setDepositTerms(room.deposit_terms || '');
+      setPetPolicy(room.pet_policy || '');
+      setUtilitiesTerms(room.utilities_terms || '');
       if (room.image_url) {
         setPreviewImage(resolveImage(room.image_url));
       }
@@ -173,6 +181,10 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
         owner_email: ownerEmail,
         owner_telegram: ownerTelegram,
         amenities,
+        contract_terms: contractTerms,
+        deposit_terms: depositTerms,
+        pet_policy: petPolicy,
+        utilities_terms: utilitiesTerms,
       };
 
       if (room) {
@@ -467,7 +479,63 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
               </div>
             </section>
 
-            {/* Section 6: Room Image */}
+            {/* Section 6: Rental Conditions */}
+            <section className="admin-section">
+              <div className="admin-section-header">
+                <i className="fa-solid fa-file-contract" />
+                <h3>Rental Conditions</h3>
+              </div>
+
+              <div className="admin-form-grid">
+                <div className="admin-form-group">
+                  <label>Contract</label>
+                  <input
+                    type="text"
+                    value={contractTerms}
+                    onChange={(e) => setContractTerms(e.target.value)}
+                    placeholder="e.g., 1 Year"
+                    className="admin-input"
+                  />
+                </div>
+
+                <div className="admin-form-group">
+                  <label>Deposit</label>
+                  <input
+                    type="text"
+                    value={depositTerms}
+                    onChange={(e) => setDepositTerms(e.target.value)}
+                    placeholder="e.g., 2 Months"
+                    className="admin-input"
+                  />
+                </div>
+              </div>
+
+              <div className="admin-form-grid">
+                <div className="admin-form-group">
+                  <label>Pet Policy</label>
+                  <input
+                    type="text"
+                    value={petPolicy}
+                    onChange={(e) => setPetPolicy(e.target.value)}
+                    placeholder="e.g., No Pets Allowed"
+                    className="admin-input"
+                  />
+                </div>
+
+                <div className="admin-form-group">
+                  <label>Utilities</label>
+                  <input
+                    type="text"
+                    value={utilitiesTerms}
+                    onChange={(e) => setUtilitiesTerms(e.target.value)}
+                    placeholder="e.g., Electricity Paid Separately"
+                    className="admin-input"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Section 7: Room Image */}
             <section className="admin-section">
               <div className="admin-section-header">
                 <i className="fa-solid fa-image" />
