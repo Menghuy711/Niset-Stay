@@ -1,0 +1,11 @@
+const homeProperties = [
+  { image: "property-1.jpg", badge: "New", link: '/room-detail', title: "Time Square BKK room", address: "Boeng Keng Kang I, Boeng Keng Kang, Phnom Penh, Cambodia", price: "$95 per month", metas: ["1 Bed", "1 Bath", "1430 sqft "], alt: "COVA Home Realty" },
+  { image: "property-2.jpg", badge: null, link: '/room-detail02', title: "Camboroom", address: "Boeung Kak I, Tuol Kouk, Phnom Penh, Cambodia", price: "$115 per month", metas: ["1 Bed", "1 Bath", "1630 sqft "], alt: "Exit Realty" },
+  { image: "property-3.jpg", badge: null, link: '/room-detail03', title: "The Real Estate Group", address: "Teuk Thla, Sen Sok, Phnom Penh, Cambodia", price: "$85 per month", metas: ["1 Bed", "1 Bath", "1240 sqft "], alt: "The Real Estate Group" },
+  { image: "property-4.jpg", badge: null, link: '/room-detail04', title: "YG condo", address: "Wat Phnom, Daun Penh, Phnom Penh, Cambodia", price: "$120 per month", metas: ["2 Bed", "1 Bath", "1260 sqft "], alt: "757 Realty" },
+  { image: "property-5.jpg", badge: null, link: '/room-detail', title: "Khmer24", address: "Prek Leap, Chroy Changvar, Phnom Penh, Cambodia", price: "$100 per month", metas: ["1 Bed", "1 Bath", "2350 sqft"], alt: "Beach Pros Realty Inc." },
+  { image: "property-6.jpg", badge: null, link: '/room-detail02', title: "KWE Town Center", address: "Boeung Kak I, Tuol Kouk, Phnom Penh, Cambodia", price: "$105.55 per month", metas: ["2 Bed", "1 Bath", "1950 sqft"], alt: "Keller Williams Elite Town Center" },
+  { image: "property-7.jpg", badge: null, link: '/room-detail03', title: "All Pros Real Estate", address: "Tuol Svay Prey I, Boeng Keng Kang, Phnom Penh, Cambodia", price: "$115 per month", metas: ["1 Bed", "1 Bath", "1580 sqft"], alt: "All Pros Real Estate" },
+  { image: "property-8.jpg", badge: null, link: '/room-detail04', title: "FIT Room", address: "Tonle Bassac, Chamkar Mon, Phnom Penh, Cambodia", price: "$180 per month", metas: ["2 Bed", "1 Bath", "1120 sqft"], alt: "FIT Realty" },
+];
+export default homeProperties;

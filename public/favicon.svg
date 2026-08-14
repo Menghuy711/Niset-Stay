@@ -1,0 +1,42 @@
+<svg id="Logo" xmlns="http://www.w3.org/2000/svg" width="2000" height="2000" viewBox="0 0 2000 2000">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #042651;
+      }
+
+      .cls-1, .cls-2 {
+        stroke: #000;
+        stroke-width: 1px;
+      }
+
+      .cls-2 {
+        fill: #f8f8f8;
+        fill-rule: evenodd;
+      }
+
+      .cls-3 {
+        font-size: 133.333px;
+        font-family: "AKbalthom Superhero";
+      }
+
+      .cls-3, .cls-4 {
+        fill: #fff;
+        text-anchor: end;
+        text-transform: uppercase;
+      }
+
+      .cls-4 {
+        font-size: 132.674px;
+        font-family: Calibri;
+      }
+    </style>
+  </defs>
+  <g id="Logo-2" data-name="Logo">
+    <rect class="cls-1" x="-54" y="-75" width="2176" height="2276"/>
+    <path class="cls-2" d="M414.349,905.956a41.53,41.53,0,0,1,8.185,58.159L340.951,1072.42a41.529,41.529,0,1,1-66.344-49.97L356.19,914.142A41.529,41.529,0,0,1,414.349,905.956Z"/>
+    <path class="cls-2" d="M243.5,897.464c24.042,0,43.531,19.265,43.531,43.031s-19.489,43.03-43.531,43.03-43.531-19.265-43.531-43.03S219.454,897.464,243.5,897.464Z"/>
+    <text id="NISET_STAY" data-name="NISET STAY" class="cls-3" transform="translate(1801.634 1007.354) scale(1.127)"><tspan x="0">NISET STAY</tspan></text>
+    <text id="House_Room_for_students" data-name="House &amp; Room for students" class="cls-4" transform="translate(1800.04 1102.048) scale(0.482)"><tspan x="0">House &amp; Room for students</tspan></text>
+  </g>
+</svg>
