@@ -13,6 +13,21 @@ function resolveImage(src) {
   return match ? match[1] : '';
 }
 
+const AMENITY_OPTIONS = [
+  'Air Conditioner',
+  'WiFi',
+  'Parking',
+  'Kitchen',
+  'Balcony',
+  '24/7 Security',
+  'Fully Furnished',
+  'Water Supply',
+  'Elevator',
+  'Pet Friendly',
+  'Gym',
+  'Laundry',
+];
+
 export default function AdminRoomModal({ room, onSave, onClose }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -23,9 +38,13 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
   const [beds, setBeds] = useState(1);
   const [baths, setBaths] = useState(1);
   const [sqft, setSqft] = useState(100);
-  const [refId, setRefId] = useState('');
   const [badge, setBadge] = useState('');
   const [mapQuery, setMapQuery] = useState('');
+  const [ownerName, setOwnerName] = useState('');
+  const [ownerPhone, setOwnerPhone] = useState('');
+  const [ownerEmail, setOwnerEmail] = useState('');
+  const [ownerTelegram, setOwnerTelegram] = useState('');
+  const [amenities, setAmenities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -43,14 +62,26 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
       setBeds(room.beds || 1);
       setBaths(room.baths || 1);
       setSqft(room.sqft || 100);
-      setRefId(room.ref_id || '');
       setBadge(room.badge || '');
       setMapQuery(room.map_query || '');
+      setOwnerName(room.owner_name || '');
+      setOwnerPhone(room.owner_phone || '');
+      setOwnerEmail(room.owner_email || '');
+      setOwnerTelegram(room.owner_telegram || '');
+      setAmenities(room.amenities || []);
       if (room.image_url) {
         setPreviewImage(resolveImage(room.image_url));
       }
     }
   }, [room]);
+
+  const toggleAmenity = (amenity) => {
+    setAmenities((prev) =>
+      prev.includes(amenity)
+        ? prev.filter((a) => a !== amenity)
+        : [...prev, amenity]
+    );
+  };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -135,9 +166,13 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
         beds: parseInt(beds, 10),
         baths: parseInt(baths, 10),
         sqft: parseInt(sqft, 10),
-        ref_id: refId,
         badge,
         map_query: mapQuery,
+        owner_name: ownerName,
+        owner_phone: ownerPhone,
+        owner_email: ownerEmail,
+        owner_telegram: ownerTelegram,
+        amenities,
       };
 
       if (room) {
@@ -261,23 +296,6 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
                 </div>
               </div>
 
-              <div className="admin-form-grid">
-                <div className="admin-form-group">
-                  <label>Reference ID</label>
-                  <input
-                    type="text"
-                    value={refId}
-                    onChange={(e) => setRefId(e.target.value)}
-                    placeholder="e.g., C21_R02113"
-                    className="admin-input"
-                  />
-                </div>
-
-                <div className="admin-form-group">
-                  <label>&nbsp;</label>
-                  <div className="admin-empty-field" />
-                </div>
-              </div>
             </section>
 
             {/* Section 2: Location */}
@@ -362,7 +380,94 @@ export default function AdminRoomModal({ room, onSave, onClose }) {
               </div>
             </section>
 
-            {/* Section 4: Room Image */}
+            {/* Section 4: Amenities */}
+            <section className="admin-section">
+              <div className="admin-section-header">
+                <i className="fa-solid fa-star" />
+                <h3>Amenities</h3>
+              </div>
+
+              <div className="admin-amenities-grid">
+                {AMENITY_OPTIONS.map((amenity) => (
+                  <label className={`admin-amenity-item${amenities.includes(amenity) ? ' selected' : ''}`} key={amenity}>
+                    <input
+                      type="checkbox"
+                      checked={amenities.includes(amenity)}
+                      onChange={() => toggleAmenity(amenity)}
+                    />
+                    <span className="admin-amenity-check"><i className="fa-solid fa-check" /></span>
+                    <span>{amenity}</span>
+                  </label>
+                ))}
+              </div>
+            </section>
+
+            {/* Section 5: Owner Information */}
+            <section className="admin-section">
+              <div className="admin-section-header">
+                <i className="fa-solid fa-user-tie" />
+                <h3>Room Owner Information</h3>
+              </div>
+
+              <div className="admin-form-grid">
+                <div className="admin-form-group">
+                  <label>Owner Name</label>
+                  <input
+                    type="text"
+                    value={ownerName}
+                    onChange={(e) => setOwnerName(e.target.value)}
+                    placeholder="e.g., Mr. Sok Chea"
+                    className="admin-input"
+                  />
+                </div>
+
+                <div className="admin-form-group">
+                  <label>Owner Phone</label>
+                  <div className="admin-input-wrapper">
+                    <i className="fa-solid fa-phone" />
+                    <input
+                      type="tel"
+                      value={ownerPhone}
+                      onChange={(e) => setOwnerPhone(e.target.value)}
+                      placeholder="e.g., +855 12 345 678"
+                      className="admin-input"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="admin-form-grid">
+                <div className="admin-form-group">
+                  <label>Owner Email</label>
+                  <div className="admin-input-wrapper">
+                    <i className="fa-solid fa-envelope" />
+                    <input
+                      type="email"
+                      value={ownerEmail}
+                      onChange={(e) => setOwnerEmail(e.target.value)}
+                      placeholder="e.g., owner@example.com"
+                      className="admin-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="admin-form-group">
+                  <label>Owner Telegram</label>
+                  <div className="admin-input-wrapper">
+                    <i className="fa-brands fa-telegram" />
+                    <input
+                      type="text"
+                      value={ownerTelegram}
+                      onChange={(e) => setOwnerTelegram(e.target.value)}
+                      placeholder="e.g., https://t.me/username"
+                      className="admin-input"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Section 6: Room Image */}
             <section className="admin-section">
               <div className="admin-section-header">
                 <i className="fa-solid fa-image" />

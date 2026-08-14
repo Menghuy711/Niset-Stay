@@ -63,6 +63,7 @@ export default function RoomDetail() {
           ? data.thumb_images 
           : ['property-3.jpg', 'property-4.jpg', 'property-5.jpg', 'property-6.jpg'],
         mapQuery: data.map_query || 'Phnom%20Penh',
+        amenities: data.amenities || [],
         ownerName: data.owner_name || 'Room Owner',
         ownerPhone: data.owner_phone || '',
         ownerEmail: data.owner_email || '',

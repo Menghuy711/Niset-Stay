@@ -1398,6 +1398,67 @@ body {
   margin: 0;
   font-size: 20px;
 }
+
+/* ========== AMENITIES SELECTION ========== */
+.admin-amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.admin-amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  background: #fff;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.admin-amenity-item:hover {
+  border-color: #c7d2fe;
+  background: #f9fafb;
+}
+
+.admin-amenity-item.selected {
+  border-color: #6366f1;
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.admin-amenity-item input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.admin-amenity-check {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  font-size: 12px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.admin-amenity-item.selected .admin-amenity-check {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #fff;
+}
 .admin-file-input {
   position: absolute;
   width: 1px;

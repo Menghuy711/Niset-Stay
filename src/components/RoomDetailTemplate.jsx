@@ -17,6 +17,25 @@ function resolveImage(filename) {
   return match ? match[1] : '';
 }
 
+function amenityIcon(amenity) {
+  const map = {
+    'Air Conditioner': 'fa-snowflake',
+    'WiFi': 'fa-wifi',
+    'Parking': 'fa-car',
+    'Kitchen': 'fa-utensils',
+    'Balcony': 'fa-sun',
+    'Security': 'fa-shield-halved',
+    '24/7 Security': 'fa-shield-halved',
+    'Fully Furnished': 'fa-couch',
+    'Water Supply': 'fa-faucet',
+    'Elevator': 'fa-elevator',
+    'Pet Friendly': 'fa-paw',
+    'Gym': 'fa-dumbbell',
+    'Laundry': 'fa-shirt',
+  };
+  return map[amenity] || 'fa-circle-check';
+}
+
 export default function RoomDetailTemplate({ data }) {
   const images = [data.mainImage, ...data.thumbImages].map(resolveImage);
 
@@ -117,7 +136,6 @@ export default function RoomDetailTemplate({ data }) {
               <h1 className="rd-title">{data.title}</h1>
               <div className="rd-meta-row">
                 <span className="rd-meta-item"><i className="fa-regular fa-calendar" /> {data.date}</span>
-                <span className="rd-meta-item"><i className="fa-solid fa-fingerprint" /> {data.refId}</span>
                 <span className="rd-meta-item"><i className="fa-solid fa-location-dot" /> {data.location}</span>
               </div>
             </div>
@@ -285,12 +303,22 @@ export default function RoomDetailTemplate({ data }) {
               <section className="rd-card">
                 <h3 className="rd-card-title"><i className="fa-solid fa-star" /> Amenities</h3>
                 <div className="rd-amenities">
-                  <span className="rd-amenity"><i className="fa-solid fa-snowflake" /> Air Conditioner</span>
-                  <span className="rd-amenity"><i className="fa-solid fa-wifi" /> WiFi</span>
-                  <span className="rd-amenity"><i className="fa-solid fa-car" /> Parking</span>
-                  <span className="rd-amenity"><i className="fa-solid fa-utensils" /> Kitchen</span>
-                  <span className="rd-amenity"><i className="fa-solid fa-sun" /> Balcony</span>
-                  <span className="rd-amenity"><i className="fa-solid fa-shield-halved" /> Security</span>
+                  {data.amenities && data.amenities.length > 0
+                    ? data.amenities.map((amenity) => (
+                        <span className="rd-amenity" key={amenity}>
+                          <i className={`fa-solid ${amenityIcon(amenity)}`} /> {amenity}
+                        </span>
+                      ))
+                    : (
+                      <>
+                        <span className="rd-amenity"><i className="fa-solid fa-snowflake" /> Air Conditioner</span>
+                        <span className="rd-amenity"><i className="fa-solid fa-wifi" /> WiFi</span>
+                        <span className="rd-amenity"><i className="fa-solid fa-car" /> Parking</span>
+                        <span className="rd-amenity"><i className="fa-solid fa-utensils" /> Kitchen</span>
+                        <span className="rd-amenity"><i className="fa-solid fa-sun" /> Balcony</span>
+                        <span className="rd-amenity"><i className="fa-solid fa-shield-halved" /> Security</span>
+                      </>
+                    )}
                 </div>
               </section>
 
