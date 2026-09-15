@@ -1,24 +1,20 @@
 {
-  "name": "niset-stay-react",
+  "name": "niset-stay",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "description": "Niset Stay — Playwright end-to-end tests",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.110.8",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^7.18.1"
+    "seed:e2e": "node scripts/apply-seed.mjs",
+    "pretest:e2e": "node scripts/apply-seed.mjs",
+    "pretest:e2e:ui": "node scripts/apply-seed.mjs",
+    "pretest:e2e:headed": "node scripts/apply-seed.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:install": "playwright install",
+    "scrape:rupp": "node scripts/scrape-rupp-news.js"
   },
   "devDependencies": {
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^6.0.4",
-    "vite": "^8.1.5"
+    "@playwright/test": "^1.49.1"
   }
 }

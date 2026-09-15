@@ -1,6 +1,42 @@
-node_modules
-dist
-dist-ssr
-*.local
-.DS_Store
+# ── Environment / secrets ──────────────────────────────────────
+# Match real/typed env files anywhere too (.env.production, .env.staging, ...)
 .env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# ── Node / Vite ─────────────────────────────────────────────────
+node_modules/
+frontend/node_modules/
+dist/
+dist-ssr/
+*.local
+*.log
+server.log
+
+# ── Playwright ──────────────────────────────────────────────────
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# ── OS / editor ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# ── Impeccable / opencode tooling state (local, not source) ──────
+.opencode/
+.impeccable/
+.impeccable-cache/
+.impeccable-results/
+
+# ── Uploads (user-generated content — not source code) ──────────
+backend/uploads/*
+!backend/uploads/.gitkeep
