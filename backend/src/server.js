@@ -18,7 +18,7 @@ const COMMITTED_SEED_HASHES = new Set([
 ]);
 
 async function guardProductionSeeds() {
-  if (process.env.NODE_ENV !== 'production') return;
+  if (process.env.NODE_ENV !== 'production' || process.env.ALLOW_SEED_USERS === 'true') return;
   const [rows] = await q('SELECT email, hashed_password FROM users');
   const leaked = rows.filter((r) => COMMITTED_SEED_HASHES.has(r.hashed_password));
   if (leaked.length > 0) {

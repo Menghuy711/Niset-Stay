@@ -25,6 +25,8 @@
 
 USE niset_stay;
 
+SET SQL_SAFE_UPDATES = 0;
+
 INSERT INTO users (email, full_name, role, landlord_status, hashed_password) VALUES
 ('superadmin@nisetstay.com', 'Super Administrator', 'super_admin', NULL,
  '$2a$12$CpYmUDUDYudAhta1jGPKLu/SHGzRB3WJAez8mfBUfy8J.wqhjnQA.'),

@@ -11,6 +11,7 @@ export const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
   decimalNumbers: true,
+  ...(settings.db.ssl ? { ssl: { rejectUnauthorized: false } } : {}),
 });
 
 export const q = async (sql, params) => {

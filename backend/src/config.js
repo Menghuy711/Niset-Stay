@@ -20,6 +20,7 @@ class Settings {
     name: process.env.DB_NAME || 'niset_stay',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
+    ssl: parseBool(process.env.DB_SSL),
   };
 
   jwt = {
