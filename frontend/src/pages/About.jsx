@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import aboutCssUrl from '../assets/css/about.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet.js';
+import PageLoader from '../components/PageLoader.jsx';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import banner1 from '../assets/images/login-banner-1.jpg';
@@ -11,7 +12,8 @@ import researchersRupp from '../assets/images/researchers_rupp.webp';
 import BrandIcon from '../components/BrandIcon.jsx';
 
 export default function About() {
-  usePageStylesheet(aboutCssUrl);
+  const cssReady = usePageStylesheet(aboutCssUrl);
+  if (!cssReady) return <PageLoader />;
   const [submitted, setSubmitted] = useState(false);
   const submitTimeoutRef = useRef(null);
   const formRef = useRef(null);

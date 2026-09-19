@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import newsCssUrl from '../assets/css/news.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet.js';
+import PageLoader from '../components/PageLoader.jsx';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import newsData from '../data/newsData.js';
@@ -20,7 +21,8 @@ const FILTERS = [
 ];
 
 export default function News() {
-  usePageStylesheet(newsCssUrl);
+  const cssReady = usePageStylesheet(newsCssUrl);
+  if (!cssReady) return <PageLoader />;
 
   const [searchParams, setSearchParams] = useSearchParams();
   // Category lives in the URL (?cat=...) so category/tag links from the detail

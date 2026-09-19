@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import myBookingsCssUrl from '../assets/css/my-bookings.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet';
+import PageLoader from '../components/PageLoader.jsx';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import InvoiceModal from '../components/InvoiceModal';
@@ -17,7 +18,8 @@ function formatDate(value, fallback = '—') {
 }
 
 export default function MyBookings() {
-  usePageStylesheet(myBookingsCssUrl);
+  const cssReady = usePageStylesheet(myBookingsCssUrl);
+  if (!cssReady) return <PageLoader />;
 
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();

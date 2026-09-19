@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import signinCssUrl from '../assets/css/signin.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet.js';
+import PageLoader from '../components/PageLoader.jsx';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import signinBanner from '../assets/images/signin_banner.png';
 import { api } from '../lib/api';
 
 export default function ForgotPassword() {
-  usePageStylesheet(signinCssUrl);
+  const cssReady = usePageStylesheet(signinCssUrl);
+  if (!cssReady) return <PageLoader />;
 
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);

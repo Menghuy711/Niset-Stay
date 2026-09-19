@@ -1,5 +1,6 @@
 import rentCssUrl from '../assets/css/rent.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet.js';
+import PageLoader from '../components/PageLoader.jsx';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import PropertyCard from '../components/PropertyCard.jsx';
@@ -12,7 +13,8 @@ import { api, imageUrl } from '../lib/api.js';
 import rentHero from '../assets/images/banner-1.jpg';
 
 export default function Rent() {
-  usePageStylesheet(rentCssUrl);
+  const cssReady = usePageStylesheet(rentCssUrl);
+  if (!cssReady) return <PageLoader />;
   const [filterCriteria, setFilterCriteria] = useState({});
   const [properties, setProperties] = useState([]);
   const [universities, setUniversities] = useState([]);

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import styleCssUrl from '../assets/css/style.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet.js';
+import PageLoader from '../components/PageLoader.jsx';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import PropertyCard from '../components/PropertyCard.jsx';
@@ -13,8 +14,10 @@ import heroImg from '../assets/images/hero.png';
 import bgPattern from '../assets/images/bg-pattern.png';
 
 export default function Home() {
-  usePageStylesheet(styleCssUrl);
+  const cssReady = usePageStylesheet(styleCssUrl);
   const { role } = useAuth();
+
+  if (!cssReady) return <PageLoader />;
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

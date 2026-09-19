@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import roomDetailCssUrl from '../assets/css/room-detail.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet.js';
+import PageLoader from '../components/PageLoader.jsx';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import RoomDetailTemplate from '../components/RoomDetailTemplate.jsx';
@@ -19,7 +20,8 @@ function formatDate(value) {
 }
 
 export default function RoomDetail() {
-  usePageStylesheet(roomDetailCssUrl);
+  const cssReady = usePageStylesheet(roomDetailCssUrl);
+  if (!cssReady) return <PageLoader />;
   const { id } = useParams();
   const navigate = useNavigate();
   const [roomData, setRoomData] = useState(null);

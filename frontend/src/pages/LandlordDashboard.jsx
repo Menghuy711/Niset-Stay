@@ -19,6 +19,7 @@ import ConfirmActionModal from '../components/landlord/ConfirmActionModal.jsx';
 import '../assets/css/admin-dashboard.css';
 import landlordCssUrl from '../assets/css/landlord.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet.js';
+import PageLoader from '../components/PageLoader.jsx';
 import landlordHero from '../assets/images/iispp_international_hall.jpg';
 import landlordHeroWebp from '../assets/images/iispp_international_hall.webp';
 import landlordHero800Webp from '../assets/images/iispp_international_hall_800w.webp';
@@ -213,7 +214,8 @@ export default function LandlordDashboard() {
   const toastTimerRef = useRef(null);
   const visibleBillsRef = useRef([]);
 
-  usePageStylesheet(landlordCssUrl);
+  const cssReady = usePageStylesheet(landlordCssUrl);
+  if (!cssReady) return <PageLoader />;
 
   useEffect(() => {
     loadForTab(activeTab);

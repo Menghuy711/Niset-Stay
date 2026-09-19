@@ -3,9 +3,11 @@ import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import notfoundCssUrl from '../assets/css/notfound.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet.js';
+import PageLoader from '../components/PageLoader.jsx';
 
 export default function NotFound() {
-  usePageStylesheet(notfoundCssUrl);
+  const cssReady = usePageStylesheet(notfoundCssUrl);
+  if (!cssReady) return <PageLoader />;
   return (
     <>
       <Header activePage="" />

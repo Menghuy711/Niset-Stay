@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import newsDetailCssUrl from '../assets/css/news-detail.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet.js';
+import PageLoader from '../components/PageLoader.jsx';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import { Link, useParams } from 'react-router-dom';
@@ -29,7 +30,8 @@ function shareLink(key, title, url) {
 }
 
 export default function NewsDetail() {
-  usePageStylesheet(newsDetailCssUrl);
+  const cssReady = usePageStylesheet(newsDetailCssUrl);
+  if (!cssReady) return <PageLoader />;
 
   const { id } = useParams();
   const article = newsData.find((n) => String(n.id) === id) ?? null;

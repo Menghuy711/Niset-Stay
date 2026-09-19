@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import profileCssUrl from '../assets/css/profile.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet';
+import PageLoader from '../components/PageLoader.jsx';
 import useDialog from '../hooks/useDialog';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -31,7 +32,8 @@ const ROLE_LABEL = {
 };
 
 export default function Profile() {
-  usePageStylesheet(profileCssUrl);
+  const cssReady = usePageStylesheet(profileCssUrl);
+  if (!cssReady) return <PageLoader />;
 
   const { user, loading: authLoading, signOut, refreshUser } = useAuth();
   const navigate = useNavigate();

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import signinCssUrl from '../assets/css/signin.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet.js';
+import PageLoader from '../components/PageLoader.jsx';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import signinBanner from '../assets/images/signin_banner.png';
@@ -28,7 +29,8 @@ function landingPath(role) {
 }
 
 export default function Signin() {
-  usePageStylesheet(signinCssUrl);
+  const cssReady = usePageStylesheet(signinCssUrl);
+  if (!cssReady) return <PageLoader />;
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
 
