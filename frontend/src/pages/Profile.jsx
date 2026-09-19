@@ -266,7 +266,7 @@ export default function Profile() {
         <div className="pf-container">
           <header className="pf-header">
             <span className="pf-badge">
-              <i className="fa-solid fa-id-card" /> My Account
+              <i className="material-symbols-rounded" aria-hidden="true" >badge</i> My Account
             </span>
             <h1 className="pf-title">My Profile</h1>
             <p className="pf-subtitle">View and manage your Niset Stay account</p>
@@ -274,10 +274,8 @@ export default function Profile() {
 
           {authLoading ? (
             <div className="pf-loading">
-              <i className="fa-solid fa-spinner fa-spin fa-2x" style={{ color: 'var(--primary-100)' }} />
-              <p style={{ marginTop: '12px', fontSize: '1.5rem', color: 'var(--neutral-40)' }}>
-                Loading your profile...
-              </p>
+              <i className="material-symbols-rounded spinning ms-2x" aria-hidden="true" >progress_activity</i>
+              <p>Loading your profile...</p>
             </div>
           ) : !user ? null : (
             <div className="pf-layout">
@@ -297,42 +295,42 @@ export default function Profile() {
                   </span>
                   <p className="pf-profile-email">{user.email}</p>
                   <p className="pf-profile-since">
-                    <i className="fa-regular fa-calendar-check" /> Member since {formatDate(user.created_at)}
+                    <i className="material-symbols-rounded" aria-hidden="true" >event_available</i> Member since {formatDate(user.created_at)}
                   </p>
                   <button type="button" className="pf-choose-avatar" onClick={openAvatarPicker}>
-                    <i className="fa-solid fa-shuffle" /> Choose an Avatar
+                    <i className="material-symbols-rounded" aria-hidden="true" >shuffle</i> Choose an Avatar
                   </button>
                 </div>
 
                 <nav className="pf-nav" aria-label="Account shortcuts">
                   {user.role === 'student' && (
                     <Link to="/my-bookings" className="pf-nav-link">
-                      <i className="fa-solid fa-list-check" />
+                      <i className="material-symbols-rounded" aria-hidden="true" >checklist</i>
                       <span>My Bookings</span>
                     </Link>
                   )}
                   {user.role === 'landlord' && (
                     <Link to="/landlord" className="pf-nav-link">
-                      <i className="fa-solid fa-key" />
+                      <i className="material-symbols-rounded" aria-hidden="true" >key</i>
                       <span>Landlord Portal</span>
                     </Link>
                   )}
                   {['admin', 'super_admin'].includes(user.role) && (
                     <Link to="/admin" className="pf-nav-link">
-                      <i className="fa-solid fa-gauge-high" />
+                      <i className="material-symbols-rounded" aria-hidden="true" >speed</i>
                       <span>{user.role === 'super_admin' ? 'Super Admin Dashboard' : 'Admin Dashboard'}</span>
                     </Link>
                   )}
                   {!['landlord', 'admin', 'super_admin'].includes(user.role) && (
                     <Link to="/rent" className="pf-nav-link">
-                      <i className="fa-solid fa-magnifying-glass" />
+                      <i className="material-symbols-rounded" aria-hidden="true" >search</i>
                       <span>Browse Rooms</span>
                     </Link>
                   )}
                 </nav>
 
                 <button type="button" className="pf-signout-btn" onClick={handleSignOut}>
-                  <i className="fa-solid fa-right-from-bracket" /> Sign Out
+                  <i className="material-symbols-rounded" aria-hidden="true" >logout</i> Sign Out
                 </button>
               </aside>
 
@@ -341,16 +339,16 @@ export default function Profile() {
                 <section className="pf-card" aria-labelledby="pf-details-title">
                   <div className="pf-card-header">
                     <h2 id="pf-details-title" className="pf-card-title">
-                      <i className="fa-solid fa-user-pen" /> Account Details
+                      <i className="material-symbols-rounded" aria-hidden="true" >edit</i> Account Details
                     </h2>
                     <p className="pf-card-subtitle">Update the information shown on your profile</p>
                   </div>
 
                   {profileMsg && (
-                    <p className="pf-success" role="status"><i className="fa-solid fa-circle-check" /> {profileMsg}</p>
+                    <p className="pf-success" role="status"><i className="material-symbols-rounded" aria-hidden="true" >check_circle</i> {profileMsg}</p>
                   )}
                   {profileError && (
-                    <p className="pf-error" role="alert"><i className="fa-solid fa-triangle-exclamation" /> {profileError}</p>
+                    <p className="pf-error" role="alert"><i className="material-symbols-rounded" aria-hidden="true" >warning</i> {profileError}</p>
                   )}
 
                   <form className="pf-form" onSubmit={handleSaveProfile} noValidate>
@@ -397,11 +395,11 @@ export default function Profile() {
                       <button type="submit" className="pf-btn-fill" disabled={savingProfile}>
                         {savingProfile ? (
                           <>
-                            <i className="fa-solid fa-spinner fa-spin" /> Saving…
+                            <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i> Saving…
                           </>
                         ) : (
                           <>
-                            <i className="fa-solid fa-floppy-disk" /> Save Changes
+                            <i className="material-symbols-rounded" aria-hidden="true" >save</i> Save Changes
                           </>
                         )}
                       </button>
@@ -412,16 +410,16 @@ export default function Profile() {
                 <section className="pf-card" aria-labelledby="pf-security-title">
                   <div className="pf-card-header">
                     <h2 id="pf-security-title" className="pf-card-title">
-                      <i className="fa-solid fa-shield-halved" /> Security
+                      <i className="material-symbols-rounded" aria-hidden="true" >security</i> Security
                     </h2>
                     <p className="pf-card-subtitle">Change your account password</p>
                   </div>
 
                   {pwMsg && (
-                    <p className="pf-success" role="status"><i className="fa-solid fa-circle-check" /> {pwMsg}</p>
+                    <p className="pf-success" role="status"><i className="material-symbols-rounded" aria-hidden="true" >check_circle</i> {pwMsg}</p>
                   )}
                   {pwError && (
-                    <p className="pf-error" role="alert"><i className="fa-solid fa-triangle-exclamation" /> {pwError}</p>
+                    <p className="pf-error" role="alert"><i className="material-symbols-rounded" aria-hidden="true" >warning</i> {pwError}</p>
                   )}
 
                   <form className="pf-form" onSubmit={handleChangePassword} noValidate>
@@ -506,11 +504,11 @@ export default function Profile() {
                       <button type="submit" className="pf-btn-fill" disabled={savingPw}>
                         {savingPw ? (
                           <>
-                            <i className="fa-solid fa-spinner fa-spin" /> Updating…
+                            <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i> Updating…
                           </>
                         ) : (
                           <>
-                            <i className="fa-solid fa-key" /> Update Password
+                            <i className="material-symbols-rounded" aria-hidden="true" >key</i> Update Password
                           </>
                         )}
                       </button>
@@ -522,7 +520,7 @@ export default function Profile() {
                   <section className="pf-card" aria-labelledby="pf-home-title">
                     <div className="pf-card-header">
                       <h2 id="pf-home-title" className="pf-card-title">
-                        <i className="fa-solid fa-house" /> Home Information
+                        <i className="material-symbols-rounded" aria-hidden="true" >home</i> Home Information
                       </h2>
                       <p className="pf-card-subtitle">
                         Change the Home Name and Address. The address is what appears on the invoices you send, so it is worth filling in even though it is optional.
@@ -530,14 +528,14 @@ export default function Profile() {
                     </div>
 
                     {homeMsg && (
-                      <p className="pf-success" role="status"><i className="fa-solid fa-circle-check" /> {homeMsg}</p>
+                      <p className="pf-success" role="status"><i className="material-symbols-rounded" aria-hidden="true" >check_circle</i> {homeMsg}</p>
                     )}
                     {homeError && (
-                      <p className="pf-error" role="alert"><i className="fa-solid fa-triangle-exclamation" /> {homeError}</p>
+                      <p className="pf-error" role="alert"><i className="material-symbols-rounded" aria-hidden="true" >warning</i> {homeError}</p>
                     )}
 
                     {homeLoading ? (
-                      <p className="pf-hint" style={{ padding: '8px 0' }}>Loading home information...</p>
+                      <p className="pf-hint pf-hint--flush">Loading home information...</p>
                     ) : (
                       <form className="pf-form" onSubmit={handleSaveHome} noValidate>
                         <div className="pf-field">
@@ -572,11 +570,11 @@ export default function Profile() {
                           <button type="submit" className="pf-btn-fill" disabled={savingHome}>
                             {savingHome ? (
                               <>
-                                <i className="fa-solid fa-spinner fa-spin" /> Saving…
+                                <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i> Saving…
                               </>
                             ) : (
                               <>
-                                <i className="fa-solid fa-floppy-disk" /> Save Home
+                                <i className="material-symbols-rounded" aria-hidden="true" >save</i> Save Home
                               </>
                             )}
                           </button>
@@ -589,16 +587,16 @@ export default function Profile() {
                 <section className="pf-card" aria-labelledby="pf-feedback-title">
                   <div className="pf-card-header">
                     <h2 id="pf-feedback-title" className="pf-card-title">
-                      <i className="fa-solid fa-comment-dots" /> Feedback
+                      <i className="material-symbols-rounded" aria-hidden="true" >chat</i> Feedback
                     </h2>
                     <p className="pf-card-subtitle">Send a note straight to the team</p>
                   </div>
 
                   {feedbackMsg && (
-                    <p className="pf-success" role="status"><i className="fa-solid fa-circle-check" /> {feedbackMsg}</p>
+                    <p className="pf-success" role="status"><i className="material-symbols-rounded" aria-hidden="true" >check_circle</i> {feedbackMsg}</p>
                   )}
                   {feedbackError && (
-                    <p className="pf-error" role="alert"><i className="fa-solid fa-triangle-exclamation" /> {feedbackError}</p>
+                    <p className="pf-error" role="alert"><i className="material-symbols-rounded" aria-hidden="true" >warning</i> {feedbackError}</p>
                   )}
 
                   <form className="pf-form" onSubmit={handleSendFeedback} noValidate>
@@ -619,11 +617,11 @@ export default function Profile() {
                       <button type="submit" className="pf-btn-fill" disabled={feedbackSending}>
                         {feedbackSending ? (
                           <>
-                            <i className="fa-solid fa-spinner fa-spin" /> Sending…
+                            <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i> Sending…
                           </>
                         ) : (
                           <>
-                            <i className="fa-solid fa-paper-plane" /> Send Feedback
+                            <i className="material-symbols-rounded" aria-hidden="true" >send</i> Send Feedback
                           </>
                         )}
                       </button>
@@ -641,17 +639,17 @@ export default function Profile() {
         <div className="pf-avatar-overlay" role="dialog" aria-modal="true" aria-label="Choose an avatar" onClick={(e) => { if (e.target === e.currentTarget) setAvatarOpen(false); }}>
           <div className="pf-avatar-modal" ref={avatarModalRef}>
             <button type="button" className="pf-avatar-close" aria-label="Close avatar picker" onClick={() => setAvatarOpen(false)}>
-              <i className="fa-solid fa-xmark" />
+              <i className="material-symbols-rounded" aria-hidden="true" >close</i>
             </button>
             <div className="pf-avatar-modal-title">
-              <i className="fa-solid fa-shuffle" /> Choose an Avatar
+              <i className="material-symbols-rounded" aria-hidden="true" >shuffle</i> Choose an Avatar
             </div>
             <p className="pf-avatar-modal-subtitle">
               Pick a generated avatar for your profile.
             </p>
 
             {avatarError && (
-              <p className="pf-error" role="alert"><i className="fa-solid fa-triangle-exclamation" /> {avatarError}</p>
+              <p className="pf-error" role="alert"><i className="material-symbols-rounded" aria-hidden="true" >warning</i> {avatarError}</p>
             )}
 
             <div className="pf-avatar-grid">
@@ -671,7 +669,7 @@ export default function Profile() {
 
             <div className="pf-avatar-actions">
               <button type="button" className="pf-btn-fill" onClick={shuffleAvatars} disabled={savingAvatar}>
-                <i className="fa-solid fa-arrows-rotate" /> Shuffle Avatars
+                <i className="material-symbols-rounded" aria-hidden="true" >refresh</i> Shuffle Avatars
               </button>
               <button type="button" className="pf-btn-ghost" onClick={() => setAvatarOpen(false)} disabled={savingAvatar}>
                 Cancel

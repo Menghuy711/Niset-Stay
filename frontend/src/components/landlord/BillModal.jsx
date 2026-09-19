@@ -213,7 +213,7 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
             <h2 id="ll-bill-modal-title">Issue a Bill</h2>
           </div>
           <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
-            <i className="fa-solid fa-xmark" />
+            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
           </button>
         </div>
 
@@ -233,7 +233,7 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
             <div className="admin-modal-footer">
               <button type="button" className="admin-btn-secondary" onClick={onClose}>Cancel</button>
               <button type="submit" className="admin-btn-primary">
-                <i className="fa-solid fa-gear" />
+                <i className="material-symbols-rounded" aria-hidden="true" >settings</i>
                 <span>Open Billing Config</span>
               </button>
             </div>
@@ -335,7 +335,7 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
                             onChange={(e) => setter('on', e.target.checked)}
                             aria-label={`Toggle ${title} line`}
                           />
-                          <span className="ll-bill-item-meta" style={{ padding: 0 }}>
+                          <span className="ll-bill-item-meta ll-bill-item-meta--flush">
                             <strong>{title}</strong>
                             <span>{usage > 0 ? `${usage.toFixed(1)} ${unit} × $${(parseFloat(state.rate) || 0).toFixed(2)}` : `Meter reading in ${unit}`}</span>
                           </span>
@@ -365,7 +365,7 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
                     <div className="ll-bill-item ll-bill-item-fixed" data-kind="trash">
                       <label className="ll-bill-item-check">
                         <input type="checkbox" checked={trashOn} onChange={(e) => setTrashOn(e.target.checked)} aria-label="Toggle trash fee" />
-                        <span className="ll-bill-item-meta" style={{ padding: 0 }}>
+                        <span className="ll-bill-item-meta ll-bill-item-meta--flush">
                           <strong>Trash Fee</strong>
                           <span>${parseFloat(cfg.trash_fee).toFixed(2)} per month</span>
                         </span>
@@ -383,7 +383,7 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
                           onChange={(e) => setExtraOn((prev) => ({ ...prev, [fee.name]: e.target.checked }))}
                           aria-label={`Toggle ${fee.name} fee`}
                         />
-                        <span className="ll-bill-item-meta" style={{ padding: 0 }}>
+                        <span className="ll-bill-item-meta ll-bill-item-meta--flush">
                           <strong>{fee.name}</strong>
                           <span>Additional monthly charge</span>
                         </span>
@@ -456,12 +456,12 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
               <button type="submit" className="admin-btn-primary" disabled={loading}>
                 {loading ? (
                   <span className="admin-btn-loading">
-                    <i className="fa-solid fa-spinner fa-spin" />
+                    <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
                     <span>Issuing...</span>
                   </span>
                 ) : (
                   <span>
-                    <i className="fa-solid fa-receipt" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >receipt_long</i>
                     <span>Issue Bill</span>
                   </span>
                 )}

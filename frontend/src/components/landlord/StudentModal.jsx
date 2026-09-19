@@ -151,7 +151,7 @@ export default function StudentModal({ student, rooms = [], onSave, onClose }) {
             <h2 id="ll-student-modal-title">{student ? 'Edit Student' : 'Add Student'}</h2>
           </div>
           <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
-            <i className="fa-solid fa-xmark" />
+            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
           </button>
         </div>
 
@@ -201,7 +201,7 @@ export default function StudentModal({ student, rooms = [], onSave, onClose }) {
               <div className="admin-form-group">
                 <label htmlFor="ll-student-phone">Phone</label>
                 <div className="admin-input-wrapper">
-                  <i className="fa-solid fa-phone" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >call</i>
                   <input
                     id="ll-student-phone"
                     type="tel"
@@ -216,7 +216,7 @@ export default function StudentModal({ student, rooms = [], onSave, onClose }) {
               <div className="admin-form-group">
                 <label htmlFor="ll-student-email">Email</label>
                 <div className="admin-input-wrapper">
-                  <i className="fa-solid fa-envelope" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >mail</i>
                   <input
                     id="ll-student-email"
                     type="email"
@@ -288,17 +288,17 @@ export default function StudentModal({ student, rooms = [], onSave, onClose }) {
                   <img src={previewIdDoc} alt="Uploaded ID document" className="ll-doc-preview" />
                   <div className="ll-doc-actions">
                     <span className="ll-doc-ok">
-                      <i className="fa-solid fa-circle-check" /> Document attached
+                      <i className="material-symbols-rounded" aria-hidden="true" >check_circle</i> Document attached
                     </span>
                     <button type="button" className="admin-btn-secondary" onClick={handleRemoveDoc}>
-                      <i className="fa-solid fa-trash-can" /> Remove
+                      <i className="material-symbols-rounded" aria-hidden="true" >delete</i> Remove
                     </button>
                   </div>
                 </div>
               ) : (
                 <div className="ll-doc-upload">
                   <label htmlFor="ll-student-doc-file" className={`ll-doc-dropzone${uploading ? ' ll-doc-busy' : ''}`}>
-                    <i className={`fa-solid ${uploading ? 'fa-spinner fa-spin' : 'fa-file-image'}`} />
+                    <i className={`material-symbols-rounded${uploading ? ' spinning' : ''}`} aria-hidden="true" >{uploading ? 'progress_activity' : 'image'}</i>
                     <span>{uploading ? 'Uploading…' : 'Click to upload an ID or passport photo'}</span>
                   </label>
                   <input
@@ -345,12 +345,12 @@ export default function StudentModal({ student, rooms = [], onSave, onClose }) {
             <button type="submit" className="admin-btn-primary" disabled={loading}>
               {loading ? (
                 <span className="admin-btn-loading">
-                  <i className="fa-solid fa-spinner fa-spin" />
+                  <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
                   <span>Saving...</span>
                 </span>
               ) : (
                 <span>
-                  <i className="fa-solid fa-floppy-disk" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >save</i>
                   <span>{student ? 'Update Student' : 'Add Student'}</span>
                 </span>
               )}

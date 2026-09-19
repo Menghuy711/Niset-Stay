@@ -6,24 +6,25 @@ import BookingModal from './BookingModal.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import useDialog from '../hooks/useDialog.js';
 import { resolveImage } from '../lib/images.js';
+import BrandIcon from './BrandIcon.jsx';
 
 function amenityIcon(amenity) {
   const map = {
-    'Air Conditioner': 'fa-snowflake',
-    'WiFi': 'fa-wifi',
-    'Parking': 'fa-car',
-    'Kitchen': 'fa-utensils',
-    'Balcony': 'fa-sun',
-    'Security': 'fa-shield-halved',
-    '24/7 Security': 'fa-shield-halved',
-    'Fully Furnished': 'fa-couch',
-    'Water Supply': 'fa-faucet',
-    'Elevator': 'fa-elevator',
-    'Pet Friendly': 'fa-paw',
-    'Gym': 'fa-dumbbell',
-    'Laundry': 'fa-shirt',
+    'Air Conditioner': 'ac_unit',
+    'WiFi': 'wifi',
+    'Parking': 'directions_car',
+    'Kitchen': 'restaurant',
+    'Balcony': 'sunny',
+    'Security': 'security',
+    '24/7 Security': 'security',
+    'Fully Furnished': 'weekend',
+    'Water Supply': 'plumbing',
+    'Elevator': 'elevator',
+    'Pet Friendly': 'pets',
+    'Gym': 'fitness_center',
+    'Laundry': 'checkroom',
   };
-  return map[amenity] || 'fa-circle-check';
+  return map[amenity] || 'check_circle';
 }
 
 function shareLink(network, url) {
@@ -38,6 +39,12 @@ function shareLink(network, url) {
 }
 
 const FAVORITES_KEY = 'niset_favorites';
+
+function mapLinkHref(mapQuery) {
+  const query = (mapQuery || '').trim();
+  if (/^https?:\/\//i.test(query)) return query;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query.replace(/@z\d{1,2}$/, '') || 'Phnom Penh')}`;
+}
 
 function readFavorites() {
   try {
@@ -152,14 +159,14 @@ export default function RoomDetailTemplate({ data }) {
         onClick={(e) => { if (e.target === e.currentTarget) closeLightbox(); }}
       >
         <button type="button" className="lightbox-close" aria-label="Close lightbox" onClick={closeLightbox}>
-          <i className="fa-solid fa-xmark" />
+          <i className="material-symbols-rounded" aria-hidden="true" >close</i>
         </button>
         <button type="button" className="lightbox-prev" aria-label="Previous image" onClick={prevImage}>
-          <i className="fa-solid fa-chevron-left" />
+          <i className="material-symbols-rounded" aria-hidden="true" >chevron_left</i>
         </button>
         <img src={images[currentIndex]} alt="Full view screen" width="1020" height="680" />
         <button type="button" className="lightbox-next" aria-label="Next image" onClick={nextImage}>
-          <i className="fa-solid fa-chevron-right" />
+          <i className="material-symbols-rounded" aria-hidden="true" >chevron_right</i>
         </button>
         <div className="lightbox-counter">{currentIndex + 1} / {images.length}</div>
       </div>
@@ -168,10 +175,10 @@ export default function RoomDetailTemplate({ data }) {
         <div className="rd-container">
           {/* Breadcrumb */}
           <nav className="rd-breadcrumb" aria-label="Breadcrumb">
-            <Link to="/"><i className="fa-solid fa-house" /> Home</Link>
-            <span className="rd-breadcrumb-sep"><i className="fa-solid fa-chevron-right" /></span>
+            <Link to="/"><i className="material-symbols-rounded" aria-hidden="true" >home</i> Home</Link>
+            <span className="rd-breadcrumb-sep"><i className="material-symbols-rounded" aria-hidden="true" >chevron_right</i></span>
             <Link to="/rent">Rent</Link>
-            <span className="rd-breadcrumb-sep"><i className="fa-solid fa-chevron-right" /></span>
+            <span className="rd-breadcrumb-sep"><i className="material-symbols-rounded" aria-hidden="true" >chevron_right</i></span>
             <span className="rd-breadcrumb-current">{data.breadcrumbCurrent}</span>
           </nav>
 
@@ -179,15 +186,15 @@ export default function RoomDetailTemplate({ data }) {
           <section className="rd-title-section">
             <div className="rd-title-left">
               <div className="rd-badge-row">
-                <span className="rd-badge rd-badge-rent"><i className="fa-solid fa-tag" /> Room for Rent</span>
+                <span className="rd-badge rd-badge-rent"><i className="material-symbols-rounded" aria-hidden="true" >sell</i> Room for Rent</span>
                 {data.badge && (
-                  <span className="rd-badge rd-badge-hot"><i className="fa-solid fa-bolt" /> {data.badge}</span>
+                  <span className="rd-badge rd-badge-hot"><i className="material-symbols-rounded" aria-hidden="true" >bolt</i> {data.badge}</span>
                 )}
               </div>
               <h1 className="rd-title">{data.title}</h1>
               <div className="rd-meta-row">
-                <span className="rd-meta-item"><i className="fa-regular fa-calendar" /> {data.date}</span>
-                <span className="rd-meta-item"><i className="fa-solid fa-location-dot" /> {data.location}</span>
+                <span className="rd-meta-item"><i className="material-symbols-rounded" aria-hidden="true" >calendar_month</i> {data.date}</span>
+                <span className="rd-meta-item"><i className="material-symbols-rounded" aria-hidden="true" >location_on</i> {data.location}</span>
               </div>
             </div>
             <div className="rd-title-right">
@@ -198,7 +205,7 @@ export default function RoomDetailTemplate({ data }) {
                   data.price
                 )}
               </h2>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '8px' }}>
+              <div className="rd-title-row">
                 <span className="rd-price-tag">Negotiable</span>
                 {(!user || isStudent) && (
                   <button
@@ -214,7 +221,7 @@ export default function RoomDetailTemplate({ data }) {
                     }}
                     onClick={handleBookNowClick}
                   >
-                    <i className="fa-solid fa-calendar-check" /> Book Now
+                    <i className="material-symbols-rounded" aria-hidden="true" >event_available</i> Book Now
                   </button>
                 )}
               </div>
@@ -226,7 +233,7 @@ export default function RoomDetailTemplate({ data }) {
             <div className="rd-gallery-main">
               <img src={images[0]} alt="Main room view" width="1020" height="680" onClick={() => openLightbox(0)} />
               <div className="rd-gallery-main-overlay">
-                <i className="fa-solid fa-expand" /> Click to enlarge
+                <i className="material-symbols-rounded" aria-hidden="true" >open_in_full</i> Click to enlarge
               </div>
             </div>
             <div className="rd-gallery-grid">
@@ -239,7 +246,7 @@ export default function RoomDetailTemplate({ data }) {
                   <img src={src} alt={`Room thumbnail ${i + 1}`} width="240" height="160" loading="lazy" />
                   {i === images.length - 2 && (
                     <div className="rd-thumb-overlay">
-                      <i className="fa-solid fa-images" />
+                      <i className="material-symbols-rounded" aria-hidden="true" >photo_library</i>
                       <span>View All</span>
                     </div>
                   )}
@@ -254,16 +261,16 @@ export default function RoomDetailTemplate({ data }) {
             <div className="rd-content-main">
               {/* Overview Stats */}
               <section className="rd-card rd-overview">
-                <h3 className="rd-card-title"><i className="fa-solid fa-chart-simple" /> Overview</h3>
+                <h3 className="rd-card-title"><i className="material-symbols-rounded" aria-hidden="true" >monitoring</i> Overview</h3>
                 <div className="rd-stats-grid">
                   {[
-                    { icon: 'fa-bed', ...data.stats[0] },
-                    { icon: 'fa-bath', ...data.stats[1] },
-                    { icon: 'fa-warehouse', ...data.stats[2] },
-                    { icon: 'fa-ruler-combined', ...data.stats[3] },
+                    { icon: 'bed', ...data.stats[0] },
+                    { icon: 'shower', ...data.stats[1] },
+                    { icon: 'warehouse', ...data.stats[2] },
+                    { icon: 'straighten', ...data.stats[3] },
                   ].map((stat) => (
                     <div className="rd-stat-item" key={stat.label}>
-                      <div className="rd-stat-icon"><i className={`fa-solid ${stat.icon}`} /></div>
+                      <div className="rd-stat-icon"><i className="material-symbols-rounded" aria-hidden="true" >{stat.icon}</i></div>
                       <div className="rd-stat-info">
                         <span className="rd-stat-value">{stat.value}</span>
                         <span className="rd-stat-label">{stat.label}</span>
@@ -275,9 +282,9 @@ export default function RoomDetailTemplate({ data }) {
 
                {/* Description */}
                <section className="rd-card">
-                 <h3 className="rd-card-title"><i className="fa-solid fa-align-left" /> Description</h3>
+                 <h3 className="rd-card-title"><i className="material-symbols-rounded" aria-hidden="true" >format_align_left</i> Description</h3>
                  <div className="rd-description">
-                   <p><strong><i className="fa-solid fa-fire" style={{ color: '#ff4e31', marginRight: '5px' }} /> {data.descriptionTitle}</strong></p>
+                   <p><strong><i className="material-symbols-rounded" aria-hidden="true" style={{ color: '#ff4e31', marginRight: '5px' }} >local_fire_department</i> {data.descriptionTitle}</strong></p>
                    <p className="rd-desc-price">Rental Price: <strong>{data.descriptionPrice}</strong> <em>(Negotiable)</em></p>
 
                    {data.description && (
@@ -286,27 +293,27 @@ export default function RoomDetailTemplate({ data }) {
 
                    <div className="rd-details-grid">
                      <div className="rd-details-column">
-                       <h4><i className="fa-solid fa-building" /> Property Details</h4>
+                       <h4><i className="material-symbols-rounded" aria-hidden="true" >apartment</i> Property Details</h4>
                        <ul>
-                         <li><i className="fa-solid fa-check" /> Bedrooms: {data.stats[0].value}</li>
-                         <li><i className="fa-solid fa-check" /> Bathrooms: {data.stats[1].value}</li>
-                         <li><i className="fa-solid fa-check" /> Area: {data.stats[3].value} m²</li>
+                         <li><i className="material-symbols-rounded" aria-hidden="true" >check</i> Bedrooms: {data.stats[0].value}</li>
+                         <li><i className="material-symbols-rounded" aria-hidden="true" >check</i> Bathrooms: {data.stats[1].value}</li>
+                         <li><i className="material-symbols-rounded" aria-hidden="true" >check</i> Area: {data.stats[3].value} m²</li>
                          {data.amenities && data.amenities.length > 0 ? (
                            data.amenities.map((a, i) => (
-                             <li key={i}><i className="fa-solid fa-check" /> {a}</li>
+                             <li key={i}><i className="material-symbols-rounded" aria-hidden="true" >check</i> {a}</li>
                            ))
                          ) : (
-                           <li><i className="fa-solid fa-check" /> Fully Furnished</li>
+                           <li><i className="material-symbols-rounded" aria-hidden="true" >check</i> Fully Furnished</li>
                          )}
                        </ul>
                      </div>
                      <div className="rd-details-column">
-                       <h4><i className="fa-solid fa-file-contract" /> Rental Conditions</h4>
+                       <h4><i className="material-symbols-rounded" aria-hidden="true" >description</i> Rental Conditions</h4>
                        <ul>
-                         <li><i className="fa-solid fa-check" /> Contract: {data.contractTerms || '1 Year'}</li>
-                         <li><i className="fa-solid fa-check" /> Deposit: {data.depositTerms || '2 Months'}</li>
-                         <li><i className={`fa-solid ${data.petPolicy && data.petPolicy.toLowerCase().includes('no') ? 'fa-xmark rd-icon-warn' : 'fa-check'}`} /> {data.petPolicy || 'No Pets Allowed'}</li>
-                         <li><i className="fa-solid fa-bolt" /> {data.utilitiesTerms || 'Electricity Paid Separately'}</li>
+                         <li><i className="material-symbols-rounded" aria-hidden="true" >check</i> Contract: {data.contractTerms || '1 Year'}</li>
+                         <li><i className="material-symbols-rounded" aria-hidden="true" >check</i> Deposit: {data.depositTerms || '2 Months'}</li>
+                         <li><i className={`material-symbols-rounded${data.petPolicy && data.petPolicy.toLowerCase().includes('no') ? ' rd-icon-warn' : ''}`} aria-hidden="true" >{data.petPolicy && data.petPolicy.toLowerCase().includes('no') ? 'close' : 'check'}</i> {data.petPolicy || 'No Pets Allowed'}</li>
+                         <li><i className="material-symbols-rounded rd-bolt-icon" aria-hidden="true" >bolt</i> {data.utilitiesTerms || 'Electricity Paid Separately'}</li>
                        </ul>
                      </div>
                    </div>
@@ -315,11 +322,11 @@ export default function RoomDetailTemplate({ data }) {
 
                {/* Owner Contact Information */}
                <section className="rd-card">
-                 <h3 className="rd-card-title"><i className="fa-solid fa-user-tie" /> Owner Information</h3>
+                 <h3 className="rd-card-title"><i className="material-symbols-rounded" aria-hidden="true" >badge</i> Owner Information</h3>
                  <div className="rd-owner-info">
                    <div className="rd-owner-header">
                      <div className="rd-owner-avatar">
-                       <i className="fa-solid fa-user" />
+                       <i className="material-symbols-rounded" aria-hidden="true" >person</i>
                      </div>
                      <div className="rd-owner-details">
                        <h4 className="rd-owner-name">{data.ownerName}</h4>
@@ -330,7 +337,7 @@ export default function RoomDetailTemplate({ data }) {
                     <div className="rd-owner-contacts">
                       {data.ownerPhone && (
                         <div className="rd-owner-contact-item">
-                          <i className="fa-solid fa-phone" />
+                          <i className="material-symbols-rounded" aria-hidden="true" >call</i>
                           <div>
                             <span className="rd-contact-label">Phone</span>
                             <a href={`tel:${data.ownerPhone}`} className="rd-contact-value">{data.ownerPhone}</a>
@@ -339,7 +346,7 @@ export default function RoomDetailTemplate({ data }) {
                       )}
                       {data.ownerEmail && (
                         <div className="rd-owner-contact-item">
-                          <i className="fa-solid fa-envelope" />
+                          <i className="material-symbols-rounded" aria-hidden="true" >mail</i>
                           <div>
                             <span className="rd-contact-label">Email</span>
                             <a href={`mailto:${data.ownerEmail}`} className="rd-contact-value">{data.ownerEmail}</a>
@@ -348,11 +355,11 @@ export default function RoomDetailTemplate({ data }) {
                       )}
                       {data.ownerTelegram && (
                         <div className="rd-owner-contact-item">
-                          <i className="fab fa-telegram" />
+                          <span className="rd-brand-icon"><BrandIcon name="telegram" /></span>
                           <div>
                             <span className="rd-contact-label">Telegram</span>
                             <a href={data.ownerTelegram} target="_blank" rel="noopener noreferrer" className="rd-contact-value">
-                              Message on Telegram <i className="fa-solid fa-external-link-alt" style={{ fontSize: '0.9em', marginLeft: '4px' }} />
+                              Message on Telegram <i className="material-symbols-rounded" aria-hidden="true" style={{ fontSize: '0.9em', marginLeft: '4px' }} >open_in_new</i>
                             </a>
                           </div>
                         </div>
@@ -363,22 +370,22 @@ export default function RoomDetailTemplate({ data }) {
 
               {/* Amenities */}
               <section className="rd-card">
-                <h3 className="rd-card-title"><i className="fa-solid fa-star" /> Amenities</h3>
+                <h3 className="rd-card-title"><i className="material-symbols-rounded" aria-hidden="true" >star</i> Amenities</h3>
                 <div className="rd-amenities">
                   {data.amenities && data.amenities.length > 0
                     ? data.amenities.map((amenity) => (
                         <span className="rd-amenity" key={amenity}>
-                          <i className={`fa-solid ${amenityIcon(amenity)}`} /> {amenity}
+                          <i className="material-symbols-rounded" aria-hidden="true" >{amenityIcon(amenity)}</i> {amenity}
                         </span>
                       ))
                     : (
                       <>
-                        <span className="rd-amenity"><i className="fa-solid fa-snowflake" /> Air Conditioner</span>
-                        <span className="rd-amenity"><i className="fa-solid fa-wifi" /> WiFi</span>
-                        <span className="rd-amenity"><i className="fa-solid fa-car" /> Parking</span>
-                        <span className="rd-amenity"><i className="fa-solid fa-utensils" /> Kitchen</span>
-                        <span className="rd-amenity"><i className="fa-solid fa-sun" /> Balcony</span>
-                        <span className="rd-amenity"><i className="fa-solid fa-shield-halved" /> Security</span>
+                        <span className="rd-amenity"><i className="material-symbols-rounded" aria-hidden="true" >ac_unit</i> Air Conditioner</span>
+                        <span className="rd-amenity"><i className="material-symbols-rounded" aria-hidden="true" >wifi</i> WiFi</span>
+                        <span className="rd-amenity"><i className="material-symbols-rounded" aria-hidden="true" >directions_car</i> Parking</span>
+                        <span className="rd-amenity"><i className="material-symbols-rounded" aria-hidden="true" >restaurant</i> Kitchen</span>
+                        <span className="rd-amenity"><i className="material-symbols-rounded" aria-hidden="true" >sunny</i> Balcony</span>
+                        <span className="rd-amenity"><i className="material-symbols-rounded" aria-hidden="true" >security</i> Security</span>
                       </>
                     )}
                 </div>
@@ -386,17 +393,21 @@ export default function RoomDetailTemplate({ data }) {
 
               {/* Map */}
               <section className="rd-card">
-                <h3 className="rd-card-title"><i className="fa-solid fa-map-location-dot" /> Location</h3>
-                <div className="rd-map-wrapper">
-                  <iframe
-                    width="100%"
-                    height="350"
-                    style={{ border: 0, borderRadius: '12px' }}
-                    loading="lazy"
-                    allowFullScreen
-                    title="Room location"
-                    src={`https://maps.google.com/maps?q=${data.mapQuery}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
-                  />
+                <h3 className="rd-card-title"><i className="material-symbols-rounded" aria-hidden="true" >location_searching</i> Location</h3>
+                <div className="rd-location-link">
+                  <a
+                    href={mapLinkHref(data.mapQuery)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rd-location-btn"
+                  >
+                    <i className="material-symbols-rounded" aria-hidden="true" >near_me</i>
+                    <div>
+                      <span className="rd-location-label">Open in Google Maps</span>
+                      <span className="rd-location-sublabel">{data.location || 'Phnom Penh, Cambodia'}</span>
+                    </div>
+                    <i className="material-symbols-rounded rd-location-arrow" aria-hidden="true" >arrow_forward</i>
+                  </a>
                 </div>
               </section>
             </div>
@@ -407,13 +418,13 @@ export default function RoomDetailTemplate({ data }) {
               <div className="rd-sidebar-card rd-share-card">
                 <h4 className="rd-sidebar-title">Share &amp; Save</h4>
                 <div className="rd-social-row">
-                  <a className="rd-social-btn rd-social-fb" href={shareLink('facebook', window.location.href)} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook"><i className="fab fa-facebook-f" /></a>
-                  <a className="rd-social-btn rd-social-tw" href={shareLink('twitter', window.location.href)} target="_blank" rel="noopener noreferrer" aria-label="Share on Twitter"><i className="fab fa-twitter" /></a>
-                  <a className="rd-social-btn rd-social-te" href={shareLink('telegram', window.location.href)} target="_blank" rel="noopener noreferrer" aria-label="Share on Telegram"><i className="fab fa-telegram" /></a>
-                  <a className="rd-social-btn rd-social-wa" href={shareLink('whatsapp', window.location.href)} target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp"><i className="fab fa-whatsapp" /></a>
+                  <a className="rd-social-btn rd-social-fb" href={shareLink('facebook', window.location.href)} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook"><BrandIcon name="facebook" /></a>
+                  <a className="rd-social-btn rd-social-tw" href={shareLink('twitter', window.location.href)} target="_blank" rel="noopener noreferrer" aria-label="Share on Twitter"><BrandIcon name="twitter" /></a>
+                  <a className="rd-social-btn rd-social-te" href={shareLink('telegram', window.location.href)} target="_blank" rel="noopener noreferrer" aria-label="Share on Telegram"><BrandIcon name="telegram" /></a>
+                  <a className="rd-social-btn rd-social-wa" href={shareLink('whatsapp', window.location.href)} target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp"><BrandIcon name="whatsapp" /></a>
                 </div>
                 <button className={`rd-like-btn${liked ? ' active' : ''}`} onClick={toggleLike}>
-                  <i className={liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart'} />
+                  <i className={`material-symbols-rounded${liked ? ' ms-fill' : ''}`} aria-hidden="true" >favorite</i>
                   <span>{liked ? 'Saved to favorites' : 'Save to favorites'}</span>
                 </button>
               </div>
@@ -427,32 +438,32 @@ export default function RoomDetailTemplate({ data }) {
                 <form className="rd-contact-form" ref={formRef} onSubmit={handleContactSubmit}>
                   {submitted && (
                     <p className="rd-form-note">
-                      <i className="fa-solid fa-circle-check" />
+                      <i className="material-symbols-rounded" aria-hidden="true" >check_circle</i>
                       Thank you — to reach {data.ownerName || 'the owner'} directly, use the phone or email above.
                     </p>
                   )}
                   <label className="rd-input-label" htmlFor="rd-contact-name">Your Name</label>
                   <div className="rd-input-group">
-                    <i className="fa-solid fa-user" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >person</i>
                     <input id="rd-contact-name" type="text" placeholder="e.g. Sokha" required />
                   </div>
                   <label className="rd-input-label" htmlFor="rd-contact-email">Email Address</label>
                   <div className="rd-input-group">
-                    <i className="fa-solid fa-envelope" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >mail</i>
                     <input id="rd-contact-email" type="email" placeholder="you@university.edu" required />
                   </div>
                   <label className="rd-input-label" htmlFor="rd-contact-phone">Phone Number</label>
                   <div className="rd-input-group">
-                    <i className="fa-solid fa-phone" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >call</i>
                     <input id="rd-contact-phone" type="tel" placeholder="+855 12 345 678" />
                   </div>
                   <label className="rd-input-label" htmlFor="rd-contact-message">Message</label>
                   <div className="rd-input-group rd-input-textarea">
-                    <i className="fa-solid fa-message" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >message</i>
                     <textarea id="rd-contact-message" rows="4" placeholder="Write your message..." />
                   </div>
                   <button type="submit" className="rd-submit-btn">
-                    <i className="fa-solid fa-paper-plane" /> Send Message
+                    <i className="material-symbols-rounded" aria-hidden="true" >send</i> Send Message
                   </button>
                 </form>
               </div>
@@ -462,7 +473,7 @@ export default function RoomDetailTemplate({ data }) {
                 <h4 className="rd-sidebar-title">Explore More Rooms</h4>
                 <div className="rd-filter-links">
                   <Link to="/rent" className="rd-filter-link active">
-                    <i className="fa-solid fa-magnifying-glass" /> Browse all available rooms
+                    <i className="material-symbols-rounded" aria-hidden="true" >search</i> Browse all available rooms
                   </Link>
                 </div>
               </div>

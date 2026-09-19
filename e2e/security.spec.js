@@ -65,6 +65,60 @@ test('non-image upload is rejected (400)', async ({ request }) => {
   expect(res.status()).toBe(400);
 });
 
+test('parse-map-link rejects loopback (127.0.0.1) targets', async ({ request }) => {
+  const token = await apiLogin(request, 'landlord@test.com', 'landlord123');
+  const res = await request.post(`${API}/api/landlord/parse-map-link`, {
+    headers: auth(token),
+    data: { url: 'http://127.0.0.1:3000/api/rooms/@11.5699,104.8916,17z' },
+  });
+  expect(res.status()).toBe(400);
+  expect((await res.json()).detail).toMatch(/internal address/i);
+});
+
+test('parse-map-link rejects cloud-metadata (169.254.169.254) targets', async ({ request }) => {
+  const token = await apiLogin(request, 'landlord@test.com', 'landlord123');
+  const res = await request.post(`${API}/api/landlord/parse-map-link`, {
+    headers: auth(token),
+    data: { url: 'http://169.254.169.254/latest/meta-data/@11.5699,104.8916,17z' },
+  });
+  expect(res.status()).toBe(400);
+  expect((await res.json()).detail).toMatch(/internal address/i);
+});
+
+test('parse-map-link rejects private RFC1918 (10.x / 192.168.x) targets', async ({ request }) => {
+  const token = await apiLogin(request, 'landlord@test.com', 'landlord123');
+  for (const url of ['http://10.0.0.1/@11.5699,104.8916,17z', 'http://192.168.1.1/@11.5699,104.8916,17z']) {
+    const res = await request.post(`${API}/api/landlord/parse-map-link`, {
+      headers: auth(token),
+      data: { url },
+    });
+    expect(res.status()).toBe(400);
+    expect((await res.json()).detail).toMatch(/internal address/i);
+  }
+});
+
+test('parse-map-link rejects localhost hostnames', async ({ request }) => {
+  const token = await apiLogin(request, 'landlord@test.com', 'landlord123');
+  const res = await request.post(`${API}/api/landlord/parse-map-link`, {
+    headers: auth(token),
+    data: { url: 'http://localhost/@11.5699,104.8916,17z' },
+  });
+  expect(res.status()).toBe(400);
+  expect((await res.json()).detail).toMatch(/internal address/i);
+});
+
+test('parse-map-link rejects non-http(s) schemes and missing urls', async ({ request }) => {
+  const token = await apiLogin(request, 'landlord@test.com', 'landlord123');
+  const file = await request.post(`${API}/api/landlord/parse-map-link`, {
+    headers: auth(token),
+    data: { url: 'file:///etc/passwd/@11.5699,104.8916,17z' },
+  });
+  expect(file.status()).toBe(400);
+
+  const absent = await request.post(`${API}/api/landlord/parse-map-link`, { headers: auth(token), data: {} });
+  expect(absent.status()).toBe(400);
+});
+
 test('a landlord cannot create a booking (403)', async ({ request }) => {
   const landlordToken = await apiLogin(request, 'landlord@test.com', 'landlord123');
 

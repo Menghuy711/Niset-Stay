@@ -29,6 +29,11 @@ const forgotLimiter = rateLimit({ windowMs: 60 * 1000, limit: forgotLimit, ...ra
 // register fixtures without tripping the counter.
 const registerLimiter = rateLimit({ windowMs: 60 * 1000, limit: registerLimit, ...rateLimitJson });
 
+// reset-password performs a synchronous bcrypt hash per valid token, so strict
+// throttling doubles as a CPU-usage guard against brute-forcing reset tokens.
+const resetLimit = settings.debug && !isProd ? 50 : 5;
+const resetLimiter = rateLimit({ windowMs: 60 * 1000, limit: resetLimit, ...rateLimitJson });
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const requireEmail = (email) => {
   if (typeof email !== 'string' || !EMAIL_RE.test(email)) return 'value is not a valid email address';
@@ -156,7 +161,7 @@ authRouter.post('/forgot-password', forgotLimiter, async (req, res) => {
   res.json(response);
 });
 
-authRouter.post('/reset-password', async (req, res) => {
+authRouter.post('/reset-password', resetLimiter, async (req, res) => {
   const { token, new_password: newPassword } = req.body ?? {};
   if (typeof token !== 'string' || !token) throw badRequest('reset token is required');
   if (typeof newPassword !== 'string' || newPassword.length < 8) {

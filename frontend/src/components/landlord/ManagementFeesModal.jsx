@@ -123,7 +123,7 @@ export default function ManagementFeesModal({ rooms, initialRoomId, onSave, onCl
             <h2 id="ll-mf-modal-title">Create Management Fee</h2>
           </div>
           <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
-            <i className="fa-solid fa-xmark" />
+            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
           </button>
         </div>
 
@@ -324,12 +324,12 @@ export default function ManagementFeesModal({ rooms, initialRoomId, onSave, onCl
             <button type="submit" className="admin-btn-primary" disabled={loading}>
               {loading ? (
                 <span className="admin-btn-loading">
-                  <i className="fa-solid fa-spinner fa-spin" />
+                  <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
                   <span>Saving...</span>
                 </span>
               ) : (
                 <span>
-                  <i className="fa-solid fa-file-invoice-dollar" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >request_quote</i>
                   <span>Create Fee</span>
                 </span>
               )}

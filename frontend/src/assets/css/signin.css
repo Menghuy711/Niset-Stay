@@ -106,6 +106,27 @@
   --transition-duration-smooth: 500ms;
 
 }
+i.material-symbols-rounded {
+  display: inline-block;
+  vertical-align: -0.135em;
+}
+.material-symbols-rounded.ms-fill {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-rounded.ms-2x {
+  font-size: 2em;
+}
+
+.material-symbols-rounded.spinning {
+  animation: ms-spin 1s linear infinite;
+}
+
+@keyframes ms-spin {
+  to { transform: rotate(360deg); }
+}
+
+
 
 /* =====================================
    Niset Stay Login/Register Page
@@ -240,6 +261,10 @@
   color: var(--neutral-40);
   line-height: 1.5;
 }
+
+.auth-card__subtitle--mb16 { margin-bottom: 16px; }
+.auth-card__subtitle--mb24 { margin-bottom: 24px; }
+.auth-card__subtitle--sm { font-size: 13px; }
 
 .auth-tabs {
   display: grid;
@@ -533,6 +558,25 @@
   padding: 10px 14px;
   border-radius: 8px;
   margin-bottom: 12px;
+}
+
+.auth-success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.auth-success-state .auth-success-icon {
+  font-size: 48px;
+  color: var(--primary-100);
+  margin-bottom: 16px;
+}
+
+.auth-row.auth-row--center {
+  justify-content: center;
+  margin-top: 8px;
 }
 
 .auth-submit {

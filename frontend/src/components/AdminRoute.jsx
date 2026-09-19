@@ -6,23 +6,8 @@ export default function AdminRoute({ children }) {
 
   if (loading) {
     return (
-      <div
-        style={{
-          minHeight: '50vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '12px',
-          padding: '48px 24px',
-          textAlign: 'center',
-          color: '#616366',
-          fontSize: '1.6rem',
-        }}
-      >
-        <span className="material-symbols-rounded spinning" aria-hidden="true" style={{ fontSize: '4.8rem' }}>
-          progress_activity
-        </span>
+      <div className="route-loader" role="status">
+        <span className="material-symbols-rounded spinning route-spinner" aria-hidden="true">progress_activity</span>
         <p>Checking your session...</p>
       </div>
     );

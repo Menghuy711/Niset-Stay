@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import useDialog from '../hooks/useDialog';
 import { getUniqueDistricts, getPriceRange, parseSearchParams, buildSearchParams } from '../utils/filterProperties.js';
 import { useSearchParams } from 'react-router-dom';
 
 export default function FilterSidebar({ onFilterChange, properties = [], universities = [] }) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const sidebarRef = useRef(null);
 
   const districts = getUniqueDistricts(properties);
   const priceRange = getPriceRange(properties);
@@ -11,6 +13,7 @@ export default function FilterSidebar({ onFilterChange, properties = [], univers
   const initialCriteria = parseSearchParams(searchParams);
   const [criteria, setCriteria] = useState(initialCriteria);
   const [isOpen, setIsOpen] = useState(false);
+  useDialog({ open: isOpen, onClose: () => setIsOpen(false), dialogRef: sidebarRef });
 
   const handleChange = useCallback((key, value) => {
     setCriteria(prev => ({ ...prev, [key]: value }));
@@ -115,7 +118,7 @@ export default function FilterSidebar({ onFilterChange, properties = [], univers
         {hasActiveFilters && <span className="filter-badge">{activeFilterCount}</span>}
       </button>
 
-      <aside className={`filter-sidebar${isOpen ? ' open' : ''}`} role="complementary" aria-label="Property filters">
+      <aside ref={sidebarRef} className={`filter-sidebar${isOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Property filters">
         <div className="filter-sidebar-header">
           <h2 className="title-medium">Filters</h2>
           <button
@@ -157,7 +160,7 @@ export default function FilterSidebar({ onFilterChange, properties = [], univers
             </div>
 
             <div className="filter-group">
-              <legend className="label-medium" style={{ padding: 0 }}>Price Range (per month)</legend>
+              <legend className="label-medium">Price Range (per month)</legend>
               <div className="price-range-inputs">
                 <div className="price-input-wrapper">
                   <span className="price-input-label">Min</span>

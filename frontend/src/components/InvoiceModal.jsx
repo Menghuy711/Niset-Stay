@@ -83,14 +83,14 @@ export default function InvoiceModal({ booking, onClose }) {
         {/* Modal Top Controls (Hidden on Print) */}
         <div className="mb-invoice-topbar">
           <span className="mb-invoice-badge">
-            <i className="fa-solid fa-file-invoice" /> Booking Invoice &amp; Receipt
+            <i className="material-symbols-rounded" aria-hidden="true" >receipt_long</i> Booking Invoice &amp; Receipt
           </span>
           <div className="mb-invoice-top-actions">
             <button type="button" className="mb-print-btn" onClick={handlePrint} title="Print Invoice">
-              <i className="fa-solid fa-print" /> Print Invoice
+              <i className="material-symbols-rounded" aria-hidden="true" >print</i> Print Invoice
             </button>
             <button type="button" className="mb-close-btn" onClick={onClose} aria-label="Close modal">
-              <i className="fa-solid fa-xmark" />
+              <i className="material-symbols-rounded" aria-hidden="true" >close</i>
             </button>
           </div>
         </div>
@@ -108,21 +108,21 @@ export default function InvoiceModal({ booking, onClose }) {
               <span className="mb-inv-number">{invoiceNo}</span>
               <span className="mb-inv-date">Issued: {issueDate}</span>
               <div className={`mb-inv-status mb-inv-status-${(booking.status || 'pending').toLowerCase()}`}>
-                <i className="fa-solid fa-circle" /> {statusLabel(booking.status)}
+                <i className="material-symbols-rounded" aria-hidden="true" >circle</i> {statusLabel(booking.status)}
               </div>
             </div>
           </div>
 
           <hr className="mb-inv-divider" />
           <div className="mb-inv-grid-2">
-              <h4 className="mb-inv-box-title"><i className="fa-solid fa-user-graduate" /> Student Information</h4>
+              <h4 className="mb-inv-box-title"><i className="material-symbols-rounded" aria-hidden="true" >school</i> Student Information</h4>
               <p className="mb-inv-text"><strong>Name:</strong> {booking.full_name}</p>
               <p className="mb-inv-text"><strong>Phone:</strong> {booking.phone}</p>
               <p className="mb-inv-text"><strong>Occupants:</strong> {booking.occupants} Person(s)</p>
             </div>
 
             <div className="mb-inv-box">
-              <h4 className="mb-inv-box-title"><i className="fa-solid fa-house-user" /> Property Details</h4>
+              <h4 className="mb-inv-box-title"><i className="material-symbols-rounded" aria-hidden="true" >home_work</i> Property Details</h4>
               <p className="mb-inv-text"><strong>Room:</strong> {booking.room_title}</p>
               <p className="mb-inv-text"><strong>Move-in Date:</strong> {moveInFormatted}</p>
               <p className="mb-inv-text"><strong>Contract Term:</strong> {contractTerms}</p>
@@ -135,7 +135,7 @@ export default function InvoiceModal({ booking, onClose }) {
                 <tr>
                   <th>Description</th>
                   <th>Terms</th>
-                  <th style={{ textAlign: 'right' }}>Amount</th>
+                  <th className="mb-inv-amount">Amount</th>
                 </tr>
               </thead>
               <tbody>
@@ -143,28 +143,28 @@ export default function InvoiceModal({ booking, onClose }) {
                   <td>
                     <strong>First Month Rent ({booking.room_title})</strong>
                     <br />
-                    <small style={{ color: '#616366' }}>Standard monthly student rental rate</small>
+                    <small className="mb-inv-note">Standard monthly student rental rate</small>
                   </td>
                   <td>1 Month</td>
-                  <td style={{ textAlign: 'right' }}>{priceText}</td>
+                  <td className="mb-inv-amount">{priceText}</td>
                 </tr>
                 <tr>
                   <td>
                     <strong>Security Deposit (Refundable)</strong>
                     <br />
-                    <small style={{ color: '#616366' }}>{depositText}</small>
+                    <small className="mb-inv-note">{depositText}</small>
                   </td>
                   <td>{depositMonths ? `${depositMonths} Months` : depositText}</td>
-                  <td style={{ textAlign: 'right' }}>{depositAmount}</td>
+                  <td className="mb-inv-amount">{depositAmount}</td>
                 </tr>
                 <tr>
                   <td>
                     <strong>Utilities</strong>
                     <br />
-                    <small style={{ color: '#616366' }}>{utilitiesText}</small>
+                    <small className="mb-inv-note">{utilitiesText}</small>
                   </td>
                   <td>{utilitiesIncluded ? 'Included' : '—'}</td>
-                  <td style={{ textAlign: 'right', fontWeight: 'bold' }}>
+                  <td className="mb-inv-amount-strong">
                     {utilitiesIncluded ? 'Included' : '—'}
                   </td>
                 </tr>
@@ -175,7 +175,7 @@ export default function InvoiceModal({ booking, onClose }) {
           {/* Invoice Total Calculation */}
           <div className="mb-inv-total-section">
             <div className="mb-inv-notes">
-              <h5><i className="fa-solid fa-circle-info" /> Important Terms:</h5>
+              <h5><i className="material-symbols-rounded" aria-hidden="true" >info</i> Important Terms:</h5>
               <ul>
                 <li>Electricity and utilities follow the room's stated terms; confirm final costs with the property manager.</li>
                 <li>Property manager will call <strong>{booking.phone}</strong> to arrange key handoff.</li>

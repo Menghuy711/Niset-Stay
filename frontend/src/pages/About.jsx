@@ -8,6 +8,7 @@ import banner2 from '../assets/images/banner-2.jpg';
 import lorMenghuyPhoto from '../assets/images/lor-menghuy.jpg';
 import heangSokunPhoto from '../assets/images/heang-sokun.jpg';
 import researchersRupp from '../assets/images/researchers_rupp.webp';
+import BrandIcon from '../components/BrandIcon.jsx';
 
 export default function About() {
   usePageStylesheet(aboutCssUrl);
@@ -55,7 +56,7 @@ export default function About() {
               <h1 className="about-hero-title">We Help Students Find Their <span>Perfect Home</span></h1>
               <p className="about-hero-text">A trusted platform connecting university students with safe, comfortable, and affordable accommodation across Cambodia.</p>
               <a href="#about-contact" className="about-hero-btn">
-                <i className="fa-solid fa-paper-plane" /> Get In Touch
+                <i className="material-symbols-rounded" aria-hidden="true" >send</i> Get In Touch
               </a>
             </div>
           </section>
@@ -70,7 +71,7 @@ export default function About() {
 
                 <div className="about-mission-card">
                   <div className="about-section-label">
-                    <i className="fa-solid fa-bullseye" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >track_changes</i>
                     <span>Our Mission</span>
                   </div>
                   <h2 className="about-section-title">Find Your Perfect Student Home Away From Home</h2>
@@ -88,7 +89,7 @@ export default function About() {
                   <ul className="about-feature-list">
                     {['Affordable Housing', 'Verified & Safe Properties', 'Prime Student Locations', 'Trusted Support Service'].map((item) => (
                       <li className="about-feature-item" key={item}>
-                        <div className="about-feature-icon"><i className="fa-solid fa-circle-check" /></div>
+                        <div className="about-feature-icon"><i className="material-symbols-rounded" aria-hidden="true" >check_circle</i></div>
                         <span>{item}</span>
                       </li>
                     ))}
@@ -103,13 +104,13 @@ export default function About() {
             <div className="about-container">
               <div className="about-stats-grid">
                 {[
-                  { icon: 'fa-users', number: '500+', label: 'Students Helped' },
-                  { icon: 'fa-house-chimney', number: '200+', label: 'Verified Rooms' },
-                  { icon: 'fa-location-dot', number: '50+', label: 'Locations' },
-                  { icon: 'fa-headset', number: '24/7', label: 'Support' },
+                  { icon: 'group', number: '500+', label: 'Students Helped' },
+                  { icon: 'home', number: '200+', label: 'Verified Rooms' },
+                  { icon: 'location_on', number: '50+', label: 'Locations' },
+                  { icon: 'support_agent', number: '24/7', label: 'Support' },
                 ].map((stat) => (
                   <div className="about-stat-item" key={stat.label}>
-                    <div className="about-stat-icon"><i className={`fa-solid ${stat.icon}`} /></div>
+                    <div className="about-stat-icon"><i className="material-symbols-rounded" aria-hidden="true" >{stat.icon}</i></div>
                     <div className="about-stat-number">{stat.number}</div>
                     <div className="about-stat-label">{stat.label}</div>
                   </div>
@@ -128,7 +129,7 @@ export default function About() {
 
                 <div className="about-developer-card">
                   <div className="about-section-label">
-                    <i className="fa-solid fa-code" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >code</i>
                     <span>Meet the Developer</span>
                   </div>
                   <h2 className="about-section-title">Hen Sopheap</h2>
@@ -146,19 +147,19 @@ export default function About() {
 
                   <div className="about-social-links">
                     <a href="mailto:Hensopheap18@gmail.com" className="about-social-link" aria-label="Email">
-                      <i className="fa-solid fa-envelope" />
+                      <i className="material-symbols-rounded" aria-hidden="true" >mail</i>
                       <span>Hensopheap18@gmail.com</span>
                     </a>
                     <a href="https://www.instagram.com/gotopheap.b" className="about-social-link" target="_blank" rel="noreferrer" aria-label="Instagram">
-                      <i className="fa-brands fa-instagram" />
+                      <BrandIcon name="instagram" />
                       <span>@gotopheap_b</span>
                     </a>
                     <a href="https://www.facebook.com/gotopheapb" className="about-social-link" target="_blank" rel="noreferrer" aria-label="Facebook">
-                      <i className="fa-brands fa-facebook" />
+                      <BrandIcon name="facebook" />
                       <span>Bunsang Sopheap</span>
                     </a>
                     <a href="https://t.me/ismesopheap_b" className="about-social-link" target="_blank" rel="noreferrer" aria-label="Telegram">
-                      <i className="fa-brands fa-telegram" />
+                      <BrandIcon name="telegram" />
                       <span>@ismesopheap_b</span>
                     </a>
                   </div>
@@ -172,7 +173,7 @@ export default function About() {
             <div className="about-container">
               <div className="about-team-header">
                 <div className="about-section-label">
-                  <i className="fa-solid fa-users" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >group</i>
                   <span>Meet the Team</span>
                 </div>
                 <h2 className="about-section-title">The People Behind Niset Stay</h2>
@@ -208,7 +209,7 @@ export default function About() {
             <div className="about-container">
               <div className="about-contact-header">
                 <div className="about-section-label">
-                  <i className="fa-solid fa-envelope-open-text" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >mark_email_read</i>
                   <span>Contact</span>
                 </div>
                 <h2 className="about-section-title">Send Us a Message</h2>
@@ -218,7 +219,7 @@ export default function About() {
               <div className="about-contact-grid">
                 <div className="about-contact-info">
                   <div className="about-info-card">
-                    <div className="about-info-icon"><i className="fa-solid fa-map-location-dot" /></div>
+                    <div className="about-info-icon"><i className="material-symbols-rounded" aria-hidden="true" >location_searching</i></div>
                     <div className="about-info-content">
                       <h3 className="about-info-title">Address</h3>
                       <p>Phnom Penh</p>
@@ -227,7 +228,7 @@ export default function About() {
                   </div>
 
                   <div className="about-info-card">
-                    <div className="about-info-icon"><i className="fa-solid fa-phone-volume" /></div>
+                    <div className="about-info-icon"><i className="material-symbols-rounded" aria-hidden="true" >support_agent</i></div>
                     <div className="about-info-content">
                       <h3 className="about-info-title">Phone</h3>
                       <p>+855 978365437</p>
@@ -236,7 +237,7 @@ export default function About() {
                   </div>
 
                   <div className="about-info-card">
-                    <div className="about-info-icon"><i className="fa-solid fa-at" /></div>
+                    <div className="about-info-icon"><i className="material-symbols-rounded" aria-hidden="true" >alternate_email</i></div>
                     <div className="about-info-content">
                       <h3 className="about-info-title">Email</h3>
                       <p>houseandroom@nisetstay.com</p>
@@ -249,7 +250,7 @@ export default function About() {
                   <form className="about-contact-form" ref={formRef} onSubmit={handleSubmit}>
                     {submitted && (
                       <p className="about-form-note">
-                        <i className="fa-solid fa-circle-check" />
+                        <i className="material-symbols-rounded" aria-hidden="true" >check_circle</i>
                         Your email app should open with your message ready to send. If it didn't, write to houseandroom@nisetstay.com.
                       </p>
                     )}
@@ -257,7 +258,7 @@ export default function About() {
                     <div className="about-form-group">
                       <label className="about-form-label" htmlFor="about-contact-name">Your Full Name</label>
                       <div className="about-input-wrapper">
-                        <i className="fa-solid fa-user" />
+                        <i className="material-symbols-rounded" aria-hidden="true" >person</i>
                         <input id="about-contact-name" name="name" type="text" placeholder="e.g. Sokha" required />
                       </div>
                     </div>
@@ -265,7 +266,7 @@ export default function About() {
                     <div className="about-form-group">
                       <label className="about-form-label" htmlFor="about-contact-email">Email Address</label>
                       <div className="about-input-wrapper">
-                        <i className="fa-solid fa-envelope" />
+                        <i className="material-symbols-rounded" aria-hidden="true" >mail</i>
                         <input id="about-contact-email" name="email" type="email" placeholder="you@university.edu" required />
                       </div>
                     </div>
@@ -273,7 +274,7 @@ export default function About() {
                     <div className="about-form-group">
                       <label className="about-form-label" htmlFor="about-contact-subject">Subject</label>
                       <div className="about-input-wrapper">
-                        <i className="fa-solid fa-tag" />
+                        <i className="material-symbols-rounded" aria-hidden="true" >sell</i>
                         <input id="about-contact-subject" name="subject" type="text" placeholder="e.g. Availability near RUPP" />
                       </div>
                     </div>
@@ -281,13 +282,13 @@ export default function About() {
                     <div className="about-form-group about-form-group-full">
                       <label className="about-form-label" htmlFor="about-contact-message">Message</label>
                       <div className="about-input-wrapper about-textarea-wrapper">
-                        <i className="fa-solid fa-message" />
+                        <i className="material-symbols-rounded" aria-hidden="true" >message</i>
                         <textarea id="about-contact-message" name="message" placeholder="Write your message here..." rows="5" required />
                       </div>
                     </div>
 
                     <button type="submit" className="about-submit-btn">
-                      <><i className="fa-solid fa-paper-plane" /> <span>Send Message</span></>
+                      <><i className="material-symbols-rounded" aria-hidden="true" >send</i> <span>Send Message</span></>
                     </button>
                   </form>
                 </div>

@@ -14,11 +14,13 @@
   --color-sun: #F6BD26;
   --color-error: #FF2134;
   --color-success: #22C55E;
-  /* status-system semantic tokens (single source of truth) */
-  --color-danger: #B91C1C;
-  --color-danger-icon: #DC2626;
-  --color-danger-deep: #991B1B;
-  --color-danger-strong: #DC2626;
+  /* status-system semantic tokens (single source of truth): base/icon/strong
+     map to the design system's canonical Status Red (#FF2134); deep stays a
+     darker ramp stop for emphasis on light fills */
+  --color-danger: #FF2134;
+  --color-danger-icon: #C01321;
+  --color-danger-deep: #8E1926;
+  --color-danger-strong: #C01321;
   --color-danger-soft: #FEF2F2;
   --color-danger-faint: #FFF5F5;
   --color-danger-border: #FECDD3;
@@ -53,6 +55,27 @@
   --radius-full: 1000px;
   --radius-circle: 50%;
 }
+i.material-symbols-rounded {
+  display: inline-block;
+  vertical-align: -0.135em;
+}
+.material-symbols-rounded.ms-fill {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-rounded.ms-2x {
+  font-size: 2em;
+}
+
+.material-symbols-rounded.spinning {
+  animation: ms-spin 1s linear infinite;
+}
+
+@keyframes ms-spin {
+  to { transform: rotate(360deg); }
+}
+
+
 
 *,
 *::before,
@@ -1181,7 +1204,7 @@ body {
   margin-bottom: 16px;
 }
 
-.admin-section h3 .fa-solid {
+.admin-section h3 .material-symbols-rounded {
   color: var(--color-primary);
 }
 
@@ -1708,6 +1731,128 @@ body {
 
 .admin-remove-image-btn:hover {
   background: var(--color-danger-soft);
+}
+
+/* Room images grid (multi-image upload) */
+.admin-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.admin-image-tile {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-fog);
+  background: var(--color-cloud);
+}
+
+.admin-image-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-image-cover-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--color-primary);
+  color: var(--color-paper);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.admin-image-tile-actions {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 1;
+}
+
+.admin-image-tile:hover .admin-image-tile-actions,
+.admin-image-tile:focus-within .admin-image-tile-actions {
+  opacity: 1;
+}
+
+.admin-image-tile-btn {
+  background: var(--color-paper);
+  color: var(--color-graphite);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.admin-image-tile-btn:hover {
+  background: var(--color-primary);
+  color: var(--color-paper);
+}
+
+.admin-image-tile-btn-danger:hover {
+  background: var(--color-danger-strong);
+  color: var(--color-paper);
+}
+
+.admin-add-image-tile {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border: 2px dashed var(--color-fog);
+  border-radius: 12px;
+  background: var(--color-paper);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--color-slate);
+  transition: all 0.15s;
+}
+
+.admin-add-image-tile:hover,
+.admin-add-image-tile.dragging {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-cloud);
+}
+
+.admin-add-image-tile > i {
+  font-size: 22px;
+}
+
+.admin-add-image-text {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  padding: 0 6px;
+}
+
+.admin-add-image-tile.uploading {
+  pointer-events: none;
+  opacity: 0.7;
 }
 
 .admin-modal-footer {
@@ -2488,7 +2633,7 @@ body {
     gap: 4px;
   }
 
-  .admin-section h3 .fa-solid {
+  .admin-section h3 .material-symbols-rounded {
     margin-bottom: 2px;
   }
 }

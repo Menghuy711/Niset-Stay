@@ -6,7 +6,10 @@ module.exports = defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // Single worker: specs share one database and the same fixture accounts
+  // (student01, landlord@test.com), so parallel workers collide on tokens and
+  // shared rows. fullyParallel:true then runs tests within a file sequentially.
+  workers: 1,
   reporter: [['list']],
   use: {
     baseURL: 'http://localhost:5173',

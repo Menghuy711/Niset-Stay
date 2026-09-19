@@ -46,12 +46,12 @@ export default function ConfirmDeleteModal({ title, kind, message, onConfirm, on
           <button type="button" className="admin-btn-danger" onClick={handleDelete} disabled={deleting}>
             {deleting ? (
               <span className="admin-btn-loading">
-                <i className="fa-solid fa-spinner fa-spin" />
+                <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
                 <span>Deleting...</span>
               </span>
             ) : (
               <span>
-                <i className="fa-solid fa-trash" />
+                <i className="material-symbols-rounded" aria-hidden="true" >delete</i>
                 <span>Delete {kind}</span>
               </span>
             )}

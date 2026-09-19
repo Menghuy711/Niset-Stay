@@ -41,7 +41,7 @@ export default function RoomAssignModal({ room, onSaved, onClose }) {
             <h2 id="ll-assign-modal-title">Create Student &amp; Assign</h2>
           </div>
           <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
-            <i className="fa-solid fa-xmark" />
+            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
           </button>
         </div>
 
@@ -73,7 +73,7 @@ export default function RoomAssignModal({ room, onSaved, onClose }) {
               <div className="admin-form-group">
                 <label htmlFor="ll-assign-email">Email</label>
                 <div className="admin-input-wrapper">
-                  <i className="fa-solid fa-envelope" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >mail</i>
                   <input
                     id="ll-assign-email"
                     type="email"
@@ -89,7 +89,7 @@ export default function RoomAssignModal({ room, onSaved, onClose }) {
               <div className="admin-form-group">
                 <label htmlFor="ll-assign-phone">Phone</label>
                 <div className="admin-input-wrapper">
-                  <i className="fa-solid fa-phone" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >call</i>
                   <input
                     id="ll-assign-phone"
                     type="tel"
@@ -108,12 +108,12 @@ export default function RoomAssignModal({ room, onSaved, onClose }) {
             <button type="submit" className="admin-btn-primary" disabled={loading}>
               {loading ? (
                 <span className="admin-btn-loading">
-                  <i className="fa-solid fa-spinner fa-spin" />
+                  <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
                   <span>Creating &amp; assigning...</span>
                 </span>
               ) : (
                 <span>
-                  <i className="fa-solid fa-person-plus" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >person_add</i>
                   <span>Create &amp; Assign</span>
                 </span>
               )}

@@ -113,7 +113,7 @@ export default function BillDetailModal({ bill, config, onUpdated, onClose }) {
             <h2 id="ll-bill-view-title">Bill Detail</h2>
           </div>
           <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
-            <i className="fa-solid fa-xmark" />
+            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
           </button>
         </div>
 
@@ -182,15 +182,15 @@ export default function BillDetailModal({ bill, config, onUpdated, onClose }) {
         <div className="admin-modal-footer no-print">
           <button type="button" className="admin-btn-quiet" onClick={onClose}>Close</button>
           <button type="button" className="admin-btn-quiet" onClick={handleCopy} disabled={working}>
-            {copied ? <i className="fa-solid fa-check" /> : <i className="fa-solid fa-copy" />}
+            {copied ? <i className="material-symbols-rounded" aria-hidden="true" >check</i> : <i className="material-symbols-rounded" aria-hidden="true" >content_copy</i>}
             <span>{copied ? 'Copied' : 'Copy'}</span>
           </button>
           <button type="button" className="admin-btn-quiet" onClick={handleShareTelegram}>
-            <i className="fa-brands fa-telegram" />
+            <i className="material-symbols-rounded" aria-hidden="true" >send</i>
             <span>Telegram</span>
           </button>
           <button type="button" className="admin-btn-quiet" onClick={handlePrint}>
-            <i className="fa-solid fa-print" />
+            <i className="material-symbols-rounded" aria-hidden="true" >print</i>
             <span>Print / PDF</span>
           </button>
           {bill.status === 'issued' && (
@@ -201,7 +201,7 @@ export default function BillDetailModal({ bill, config, onUpdated, onClose }) {
                 disabled={working}
                 onClick={() => runAction(`/api/landlord/bills/${bill.id}/resend`, 'Bill resent to student.')}
               >
-                {working ? <i className="fa-solid fa-spinner fa-spin" /> : <i className="fa-solid fa-paper-plane" />}
+                {working ? <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i> : <i className="material-symbols-rounded" aria-hidden="true" >send</i>}
                 <span>Resend</span>
               </button>
               <button
@@ -210,7 +210,7 @@ export default function BillDetailModal({ bill, config, onUpdated, onClose }) {
                 disabled={working}
                 onClick={() => runAction(`/api/landlord/bills/${bill.id}/mark-paid`, 'Bill marked as paid.')}
               >
-                {working ? <i className="fa-solid fa-spinner fa-spin" /> : <i className="fa-solid fa-check-circle" />}
+                {working ? <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i> : <i className="material-symbols-rounded" aria-hidden="true" >check_circle</i>}
                 <span>Mark as Paid</span>
               </button>
             </>

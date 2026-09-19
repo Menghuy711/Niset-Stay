@@ -98,7 +98,7 @@ export default function BillingConfigModal({ config, onSaved, onClose }) {
             <h2 id="ll-billing-config-title">Billing Config</h2>
           </div>
           <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
-            <i className="fa-solid fa-xmark" />
+            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
           </button>
         </div>
 
@@ -266,12 +266,12 @@ export default function BillingConfigModal({ config, onSaved, onClose }) {
             <button type="submit" className="admin-btn-primary" disabled={loading}>
               {loading ? (
                 <span className="admin-btn-loading">
-                  <i className="fa-solid fa-spinner fa-spin" />
+                  <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
                   <span>Saving...</span>
                 </span>
               ) : (
                 <span>
-                  <i className="fa-solid fa-gear" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >settings</i>
                   <span>Save Billing Config</span>
                 </span>
               )}

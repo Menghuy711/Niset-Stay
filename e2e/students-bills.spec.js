@@ -52,6 +52,21 @@ function cleanupBillRows(billIds) {
   }
 }
 
+// Aborted runs can leave paid E2E bills behind (paid bills can't be deleted via
+// the API), which then pollute the summary tiles the assertion relies on.
+// seed.sql inserts no bills, so every bill row attached to the test landlord is
+// a leftover from a previous e2e run — wipe them (and their line items).
+function purgeE2EBills() {
+  const { user, pass, db } = readDbEnv();
+  try {
+    execFileSync('mysql', [ '-u', user, ...(pass ? [`-p${pass}`] : []), db, '-e',
+      `DELETE bill_items FROM bill_items JOIN bills ON bill_items.bill_id = bills.id WHERE bills.landlord_id = 6;
+       DELETE FROM bills WHERE landlord_id = 6;` ], { stdio: 'ignore' });
+  } catch (err) {
+    console.error('mysql E2E bill purge failed:', err.message);
+  }
+}
+
 function cleanupConfig() {
   const { user, pass, db } = readDbEnv();
   try {
@@ -179,6 +194,7 @@ test('bills: config, generate, itemized modal, filters, invoice, pending-only de
   const billIds = [];
   const studentIds = [];
   await purgeStudentsByName(request, headers, 'E2E Billed Student');
+  purgeE2EBills();
 
   const configRes = await request.put(`${API}/billing-config`, {
     headers,
@@ -211,6 +227,7 @@ test('bills: config, generate, itemized modal, filters, invoice, pending-only de
   const student = await studentRes.json();
   studentIds.push(student.id);
 
+  try {
   await openLandlord(page);
   await page.getByRole('tab', { name: 'Bills' }).click();
 
@@ -292,11 +309,13 @@ test('bills: config, generate, itemized modal, filters, invoice, pending-only de
   const billsRes = await request.get(`${API}/bills?student_id=${student.id}`, { headers });
   const bills = await billsRes.json();
   bills.forEach((b) => billIds.push(b.id));
-
-  for (const id of studentIds) {
-    await request.delete(`${API}/students/${id}`, { headers }).catch(() => {});
+  } finally {
+    for (const id of studentIds) {
+      await request.delete(`${API}/students/${id}`, { headers }).catch(() => {});
+    }
+    await request.delete(`${API}/rooms/${room.id}`, { headers }).catch(() => {});
+    cleanupBillRows(billIds);
+    cleanupConfig();
+    purgeE2EBills();
   }
-  await request.delete(`${API}/rooms/${room.id}`, { headers }).catch(() => {});
-  cleanupBillRows(billIds);
-  cleanupConfig();
 });

@@ -70,19 +70,18 @@ export default function ForgotPassword() {
 
                 {sent ? (
                   /* ── Success state ─────────────────────────── */
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '24px 0' }}>
+                  <div className="auth-success-state">
                     <span
-                      className="material-symbols-rounded"
+                      className="material-symbols-rounded auth-success-icon"
                       aria-hidden="true"
-                      style={{ fontSize: '48px', color: 'var(--primary-100)', marginBottom: '16px' }}
                     >
                       mark_email_read
                     </span>
-                    <p className="auth-card__subtitle" style={{ marginBottom: '16px' }}>
+                    <p className="auth-card__subtitle auth-card__subtitle--mb16">
                       If that email exists, a password reset link has been sent to <strong>{email}</strong>.
                     </p>
                     {devResetLink && (
-                      <p className="auth-card__subtitle" style={{ marginBottom: '24px', fontSize: '13px' }}>
+                      <p className="auth-card__subtitle auth-card__subtitle--mb24 auth-card__subtitle--sm">
                         (Dev mode — no email server: continue via{' '}
                         <Link to={devResetLink} className="auth-link">this reset link</Link>)
                       </p>
@@ -122,7 +121,7 @@ export default function ForgotPassword() {
                       {loading ? 'Sending…' : 'Send Reset Link'}
                     </button>
 
-                    <div className="auth-row" style={{ justifyContent: 'center', marginTop: '8px' }}>
+                    <div className="auth-row auth-row--center">
                       <Link to="/signin" className="auth-link">Back to Sign In</Link>
                     </div>
                   </form>

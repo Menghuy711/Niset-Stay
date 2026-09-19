@@ -149,10 +149,10 @@ export default function BookingModal({ isOpen, onClose, roomData }) {
       <div ref={modalRef} className="bm-modal" role="dialog" aria-modal="true" aria-labelledby="bm-modal-title">
         <div className="bm-header">
           <button className="bm-close-btn" onClick={onClose} aria-label="Close modal">
-            <i className="fa-solid fa-xmark" />
+            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
           </button>
           <span className="bm-title-badge">
-            <i className="fa-solid fa-calendar-check" /> Direct Booking
+            <i className="material-symbols-rounded" aria-hidden="true" >event_available</i> Direct Booking
           </span>
           <h3 id="bm-modal-title" className="bm-header-title">Reserve Your Stay</h3>
           <p className="bm-header-subtitle">Reserve this room now with a simple monthly rental</p>
@@ -184,7 +184,7 @@ export default function BookingModal({ isOpen, onClose, roomData }) {
           {hasActiveBooking ? (
             <div className="bm-success-box">
               <div className="bm-success-icon">
-                <i className="fa-solid fa-circle-info" />
+                <i className="material-symbols-rounded" aria-hidden="true" >info</i>
               </div>
               <h3 className="bm-success-title">You already have a booking for this room.</h3>
               <p className="bm-success-desc">
@@ -194,19 +194,19 @@ export default function BookingModal({ isOpen, onClose, roomData }) {
                 <button className="bm-secondary-btn" onClick={onClose}>
                   Close
                 </button>
-                <button className="bm-submit-btn" style={{ width: 'auto', padding: '0 24px' }} onClick={handleGoToBookings}>
-                  <i className="fa-solid fa-list-check" /> View My Bookings
+                <button className="bm-submit-btn bm-submit-btn--compact" onClick={handleGoToBookings}>
+                  <i className="material-symbols-rounded" aria-hidden="true" >checklist</i> View My Bookings
                 </button>
               </div>
             </div>
           ) : bookingCheckLoading ? (
-            <div style={{ textAlign: 'center', padding: '32px 0', color: '#616366', fontSize: '1.5rem' }}>
-              <i className="fa-solid fa-spinner fa-spin" /> Checking your existing bookings...
+            <div className="bm-check-status">
+              <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i> Checking your existing bookings...
             </div>
           ) : isSuccess ? (
             <div className="bm-success-box">
               <div className="bm-success-icon">
-                <i className="fa-solid fa-check" />
+                <i className="material-symbols-rounded" aria-hidden="true" >check</i>
               </div>
               <h3 className="bm-success-title">Booking Submitted!</h3>
               <p className="bm-success-desc">
@@ -216,8 +216,8 @@ export default function BookingModal({ isOpen, onClose, roomData }) {
                 <button className="bm-secondary-btn" onClick={onClose}>
                   Close
                 </button>
-                <button className="bm-submit-btn" style={{ width: 'auto', padding: '0 24px' }} onClick={handleGoToBookings}>
-                  <i className="fa-solid fa-list-check" /> View My Bookings
+                <button className="bm-submit-btn bm-submit-btn--compact" onClick={handleGoToBookings}>
+                  <i className="material-symbols-rounded" aria-hidden="true" >checklist</i> View My Bookings
                 </button>
               </div>
             </div>
@@ -225,17 +225,17 @@ export default function BookingModal({ isOpen, onClose, roomData }) {
             <form className="bm-form" onSubmit={handleSubmit}>
               {error && (
                 <div className="bm-error">
-                  <i className="fa-solid fa-circle-exclamation" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >error</i>
                   <span>{error}</span>
                 </div>
               )}
 
               <div className="bm-field-group">
                 <label className="bm-label">
-                  <i className="fa-solid fa-user" /> Full Name
+                  <i className="material-symbols-rounded" aria-hidden="true" >person</i> Full Name
                 </label>
                 <div className="bm-input-wrapper">
-                  <i className="fa-solid fa-user-pen" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >edit</i>
                   <input
                     type="text"
                     className="bm-input"
@@ -249,10 +249,10 @@ export default function BookingModal({ isOpen, onClose, roomData }) {
 
               <div className="bm-field-group">
                 <label className="bm-label">
-                  <i className="fa-solid fa-phone" /> Phone Number
+                  <i className="material-symbols-rounded" aria-hidden="true" >call</i> Phone Number
                 </label>
                 <div className="bm-input-wrapper">
-                  <i className="fa-solid fa-mobile-screen" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >smartphone</i>
                   <input
                     type="tel"
                     className="bm-input"
@@ -267,10 +267,10 @@ export default function BookingModal({ isOpen, onClose, roomData }) {
               <div className="bm-row">
                 <div className="bm-field-group">
                   <label className="bm-label">
-                    <i className="fa-solid fa-users" /> Occupants
+                    <i className="material-symbols-rounded" aria-hidden="true" >group</i> Occupants
                   </label>
                   <div className="bm-input-wrapper">
-                    <i className="fa-solid fa-user-group" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >group</i>
                     <select
                       className="bm-select"
                       value={occupants}
@@ -286,10 +286,10 @@ export default function BookingModal({ isOpen, onClose, roomData }) {
 
                 <div className="bm-field-group">
                   <label className="bm-label">
-                    <i className="fa-solid fa-calendar-days" /> Move-in Date
+                    <i className="material-symbols-rounded" aria-hidden="true" >calendar_month</i> Move-in Date
                   </label>
                   <div className="bm-input-wrapper">
-                    <i className="fa-regular fa-calendar" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >calendar_month</i>
                     <input
                       type="date"
                       className="bm-input"
@@ -304,9 +304,9 @@ export default function BookingModal({ isOpen, onClose, roomData }) {
 
               <button type="submit" className="bm-submit-btn" disabled={loading}>
                 {loading ? (
-                  <><i className="fa-solid fa-spinner fa-spin" /> Submitting...</>
+                  <><i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i> Submitting...</>
                 ) : (
-                  <><i className="fa-solid fa-paper-plane" /> Confirm Booking</>
+                  <><i className="material-symbols-rounded" aria-hidden="true" >send</i> Confirm Booking</>
                 )}
               </button>
             </form>

@@ -94,7 +94,7 @@ test('student can change their password and sign back in with the new one', asyn
 
     // The new password signs in fine.
     await loginAs(page, EMAIL, tempPassword);
-    await expect(page.getByText('My Bookings')).toBeVisible();
+    await expect(page.locator('.navbar-link', { hasText: 'My Bookings' })).toBeVisible();
   } finally {
     // Restore password123 so every other suite keeps working.
     const res = await request.post(`${API}/api/auth/login`, { data: { email: EMAIL, password: tempPassword } });

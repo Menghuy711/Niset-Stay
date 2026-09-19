@@ -3,6 +3,12 @@ import { api } from '../../lib/api';
 import { resolveImage } from '../../lib/images';
 import useDialog from '../../hooks/useDialog';
 
+function isHttpUrl(value) {
+  return /^https?:\/\//i.test((value || '').trim());
+}
+
+const MAX_ROOM_IMAGES = 6;
+
 const AMENITY_OPTIONS = [
   'Air Conditioner',
   'WiFi',
@@ -26,7 +32,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
   const [price, setPrice] = useState('');
   const [floorId, setFloorId] = useState('');
   const [address, setAddress] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [images, setImages] = useState([]);
   const [beds, setBeds] = useState(1);
   const [baths, setBaths] = useState(1);
   const [sqft, setSqft] = useState(1200);
@@ -34,6 +40,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
   const [mapQuery, setMapQuery] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
+  const [mapLinkUrl, setMapLinkUrl] = useState('');
   const [ownerName, setOwnerName] = useState('');
   const [ownerPhone, setOwnerPhone] = useState('');
   const [ownerEmail, setOwnerEmail] = useState('');
@@ -49,7 +56,6 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
   const [mapLink, setMapLink] = useState('');
   const [mapLinkError, setMapLinkError] = useState('');
   const [mapLinkSuccess, setMapLinkSuccess] = useState('');
-  const [previewImage, setPreviewImage] = useState('');
   const fileInputRef = useRef(null);
   const parseInFlightRef = useRef(null);
 
@@ -60,12 +66,16 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
       setPrice(room.price?.toString() || '');
       setFloorId(room.floor_id ?? '');
       setAddress(room.address || '');
-      setImageUrl(room.image_url || '');
+      setImages([
+        room.image_url,
+        ...(Array.isArray(room.thumb_images) ? room.thumb_images : []),
+      ].filter(Boolean));
       setBeds(room.beds || 1);
       setBaths(room.baths || 1);
       setSqft(room.sqft || 1200);
       setBadge(room.badge || '');
       setMapQuery(room.map_query || '');
+      setMapLinkUrl(isHttpUrl(room.map_query) ? room.map_query : '');
       setLatitude(room.latitude ?? '');
       setLongitude(room.longitude ?? '');
       setOwnerName(room.owner_name || '');
@@ -77,9 +87,6 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
       setDepositTerms(room.deposit_terms || '');
       setPetPolicy(room.pet_policy || '');
       setUtilitiesTerms(room.utilities_terms || '');
-      if (room.image_url) {
-        setPreviewImage(resolveImage(room.image_url));
-      }
     }
   }, [room]);
 
@@ -101,6 +108,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
       .then((res) => ({
         latitude: String(res.latitude),
         longitude: String(res.longitude),
+        url: typeof res.url === 'string' ? res.url : '',
       }))
       .finally(() => {
         if (parseInFlightRef.current?.url === url) parseInFlightRef.current = null;
@@ -115,9 +123,10 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
     setMapLinkError('');
     setMapLinkSuccess('');
     try {
-      const { latitude: lat, longitude: lng } = await parseMapLink(url);
+      const { latitude: lat, longitude: lng, url: resolvedUrl } = await parseMapLink(url);
       setLatitude(lat);
       setLongitude(lng);
+      if (resolvedUrl) setMapLinkUrl(resolvedUrl);
       setMapLink('');
       setMapLinkSuccess('Location saved from this link.');
     } catch (err) {
@@ -128,6 +137,14 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (images.length >= MAX_ROOM_IMAGES) {
+      setError(`You can add up to ${MAX_ROOM_IMAGES} images.`);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
 
     if (file.size > 5 * 1024 * 1024) {
       setError('Image size must be under 5MB');
@@ -148,8 +165,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
       // Backend stores the file and returns { url: "/uploads/<name>" }
       const res = await api.postForm('/api/uploads', formData);
 
-      setPreviewImage(resolveImage(res.url));
-      setImageUrl(res.url);
+      setImages((prev) => [...prev, res.url]);
     } catch (err) {
       setError(err.message || 'Upload failed. Please try again.');
     } finally {
@@ -160,9 +176,10 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
     }
   };
 
-  const handleRemoveImage = async () => {
-    if (imageUrl && imageUrl.startsWith('/uploads/')) {
-      const filename = imageUrl.split('/uploads/')[1];
+  const handleRemoveImage = async (index) => {
+    const url = images[index];
+    if (url && url.startsWith('/uploads/')) {
+      const filename = url.split('/uploads/')[1];
       if (filename) {
         try {
           await api.del(`/api/uploads/${encodeURIComponent(filename)}`);
@@ -171,11 +188,20 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
         }
       }
     }
-    setPreviewImage('');
-    setImageUrl('');
+    setImages((prev) => prev.filter((_, i) => i !== index));
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleMoveImage = (from, to) => {
+    if (to < 0 || to >= images.length) return;
+    setImages((prev) => {
+      const next = [...prev];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+      return next;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -205,11 +231,12 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
     if (mapLink.trim()) {
       setLoading(true);
       try {
-        const { latitude: lat, longitude: lng } = await parseMapLink(mapLink.trim());
+        const { latitude: lat, longitude: lng, url: resolvedUrl } = await parseMapLink(mapLink.trim());
         latNum = parseFloat(lat);
         lngNum = parseFloat(lng);
         setLatitude(lat);
         setLongitude(lng);
+        if (resolvedUrl) setMapLinkUrl(resolvedUrl);
         setMapLink('');
       } catch (err) {
         setError(err.message || 'Could not parse this Google Maps link. Please check the URL and try again.');
@@ -218,9 +245,11 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
       }
     }
 
-    const computedMapQuery = (Number.isFinite(latNum) && Number.isFinite(lngNum))
-      ? `${latNum},${lngNum}`
-      : (mapQuery || null);
+    const computedMapQuery = mapLinkUrl.trim()
+      ? mapLinkUrl.trim()
+      : ((Number.isFinite(latNum) && Number.isFinite(lngNum))
+          ? `${latNum},${lngNum}`
+          : (mapQuery || null));
 
     setLoading(true);
 
@@ -230,7 +259,8 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
         description,
         price: numericPrice,
         address,
-        image_url: imageUrl,
+        image_url: images[0] || '',
+        thumb_images: images.slice(1).length > 0 ? images.slice(1) : null,
         beds: bedsNum,
         baths: bathsNum,
         sqft: sqftNum,
@@ -270,14 +300,14 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
 
   return (
     <div className="admin-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="admin-modal admin-room-modal" role="dialog" aria-modal="true" aria-labelledby="admin-room-modal-title">
+      <div className="admin-modal admin-room-modal" role="dialog" aria-modal="true" aria-labelledby="admin-room-modal-title" ref={modalRef}>
         {/* Sticky Header */}
         <div className="admin-modal-header">
           <div className="admin-modal-header-content">
             <h2 id="admin-room-modal-title">{room ? 'Edit Room' : 'Add New Room'}</h2>
           </div>
           <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
-            <i className="fa-solid fa-xmark" />
+            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
           </button>
         </div>
 
@@ -291,7 +321,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
             {/* Section 1: Basic Information */}
             <section className="admin-section">
               <div className="admin-section-header">
-                <i className="fa-solid fa-align-left" />
+                <i className="material-symbols-rounded" aria-hidden="true" >format_align_left</i>
                 <h3>Basic Information</h3>
               </div>
               
@@ -381,14 +411,14 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
             {/* Section 2: Location */}
             <section className="admin-section">
               <div className="admin-section-header">
-                <i className="fa-solid fa-location-dot" />
+                <i className="material-symbols-rounded" aria-hidden="true" >location_on</i>
                 <h3>Location</h3>
               </div>
 
               <div className="admin-form-group">
                 <label htmlFor="admin-address">Address</label>
                 <div className="admin-input-wrapper">
-                  <i className="fa-solid fa-location-dot" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >location_on</i>
                   <input
                     id="admin-address"
                     type="text"
@@ -403,7 +433,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
               <div className="admin-form-group">
                 <label htmlFor="admin-map-link">Google Maps Link</label>
                 <div className="admin-input-wrapper">
-                  <i className="fa-solid fa-map-location-dot" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >location_searching</i>
                   <input
                     id="admin-map-link"
                     type="url"
@@ -418,7 +448,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
                     onBlur={handleMapLinkBlur}
                   />
                 </div>
-                <p className="admin-hint">Paste any Google Maps link and click away to save the room location. The link itself is not stored.</p>
+                <p className="admin-hint">Paste any Google Maps link and click away to save the room location. The link is stored so students can open the exact place in Google Maps.</p>
                 {mapLinkError && <p className="admin-error">{mapLinkError}</p>}
                 {mapLinkSuccess && <p className="admin-success">{mapLinkSuccess}</p>}
               </div>
@@ -427,7 +457,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
             {/* Section 3: Property Details */}
             <section className="admin-section">
               <div className="admin-section-header">
-                <i className="fa-solid fa-chart-simple" />
+                <i className="material-symbols-rounded" aria-hidden="true" >monitoring</i>
                 <h3>Property Details</h3>
               </div>
 
@@ -475,7 +505,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
             {/* Section 4: Amenities */}
             <section className="admin-section">
               <div className="admin-section-header">
-                <i className="fa-solid fa-star" />
+                <i className="material-symbols-rounded" aria-hidden="true" >star</i>
                 <h3>Amenities</h3>
               </div>
 
@@ -487,7 +517,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
                       checked={amenities.includes(amenity)}
                       onChange={() => toggleAmenity(amenity)}
                     />
-                    <span className="admin-amenity-check"><i className="fa-solid fa-check" /></span>
+                    <span className="admin-amenity-check"><i className="material-symbols-rounded" aria-hidden="true" >check</i></span>
                     <span>{amenity}</span>
                   </label>
                 ))}
@@ -497,7 +527,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
             {/* Section 5: Owner Information */}
             <section className="admin-section">
               <div className="admin-section-header">
-                <i className="fa-solid fa-user-tie" />
+                <i className="material-symbols-rounded" aria-hidden="true" >badge</i>
                 <h3>Room Owner Information</h3>
               </div>
 
@@ -517,7 +547,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
                 <div className="admin-form-group">
                   <label htmlFor="admin-owner-phone">Owner Phone</label>
                   <div className="admin-input-wrapper">
-                    <i className="fa-solid fa-phone" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >call</i>
                     <input
                       id="admin-owner-phone"
                       type="tel"
@@ -534,7 +564,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
                 <div className="admin-form-group">
                   <label htmlFor="admin-owner-email">Owner Email</label>
                   <div className="admin-input-wrapper">
-                    <i className="fa-solid fa-envelope" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >mail</i>
                     <input
                       id="admin-owner-email"
                       type="email"
@@ -549,7 +579,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
                 <div className="admin-form-group">
                   <label htmlFor="admin-owner-telegram">Owner Telegram</label>
                   <div className="admin-input-wrapper">
-                    <i className="fa-brands fa-telegram" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >send</i>
                     <input
                       id="admin-owner-telegram"
                       type="text"
@@ -566,7 +596,7 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
             {/* Section 6: Rental Conditions */}
             <section className="admin-section">
               <div className="admin-section-header">
-                <i className="fa-solid fa-file-contract" />
+                <i className="material-symbols-rounded" aria-hidden="true" >description</i>
                 <h3>Rental Conditions</h3>
               </div>
 
@@ -623,31 +653,64 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
               </div>
             </section>
 
-            {/* Section 7: Room Image */}
+            {/* Section 7: Room Images */}
             <section className="admin-section">
               <div className="admin-section-header">
-                <i className="fa-solid fa-image" />
-                <h3>Room Image</h3>
+                <i className="material-symbols-rounded" aria-hidden="true" >image</i>
+                <h3>Room Images</h3>
               </div>
 
-              <div className="admin-image-upload-area">
-                {previewImage ? (
-                  <div className="admin-image-preview">
-                    <img src={previewImage} alt="Room preview" className="admin-preview-image" />
-                    <div className="admin-image-overlay">
+              <p className="admin-upload-hint">The first photo is the cover shown on listings. You can add up to {MAX_ROOM_IMAGES} images.</p>
+
+              <div className="admin-images-grid">
+                {images.map((url, index) => (
+                  <div className={`admin-image-tile${index === 0 ? ' is-cover' : ''}`} key={`${url}-${index}`}>
+                    <img src={resolveImage(url)} alt={`Room photo ${index + 1}`} />
+                    {index === 0 && (
+                      <span className="admin-image-cover-badge">
+                        <i className="material-symbols-rounded" aria-hidden="true" >workspace_premium</i>
+                        Cover
+                      </span>
+                    )}
+                    <div className="admin-image-tile-actions">
+                      {index > 0 && (
+                        <button
+                          type="button"
+                          className="admin-image-tile-btn"
+                          onClick={() => handleMoveImage(index, index - 1)}
+                          aria-label="Move photo left"
+                          title="Move left"
+                        >
+                          <i className="material-symbols-rounded" aria-hidden="true" >chevron_left</i>
+                        </button>
+                      )}
+                      {index < images.length - 1 && (
+                        <button
+                          type="button"
+                          className="admin-image-tile-btn"
+                          onClick={() => handleMoveImage(index, index + 1)}
+                          aria-label="Move photo right"
+                          title="Move right"
+                        >
+                          <i className="material-symbols-rounded" aria-hidden="true" >chevron_right</i>
+                        </button>
+                      )}
                       <button
                         type="button"
-                        className="admin-remove-image-btn"
-                        onClick={handleRemoveImage}
-                        aria-label="Remove image"
+                        className="admin-image-tile-btn admin-image-tile-btn-danger"
+                        onClick={() => handleRemoveImage(index)}
+                        aria-label="Remove photo"
+                        title="Remove"
                       >
-                        <i className="fa-solid fa-trash" />
+                        <i className="material-symbols-rounded" aria-hidden="true" >delete</i>
                       </button>
                     </div>
                   </div>
-                ) : (
+                ))}
+
+                {images.length < MAX_ROOM_IMAGES && (
                   <div
-                    className={`admin-upload-zone${uploading ? ' uploading' : ''}`}
+                    className={`admin-add-image-tile${uploading ? ' uploading' : ''}`}
                     role="button"
                     tabIndex={0}
                     aria-label="Upload room image (PNG, JPG or WEBP up to 5MB)"
@@ -671,26 +734,29 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
                   >
                     {uploading ? (
                       <div className="admin-upload-loading">
-                        <i className="fa-solid fa-spinner fa-spin" />
-                        <span>Uploading image...</span>
+                        <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
+                        <span>Uploading...</span>
                       </div>
                     ) : (
                       <>
-                        <i className="fa-solid fa-cloud-arrow-up" />
-                        <div className="admin-upload-text">
-                          <span className="admin-upload-label">Upload room image</span>
-                          <span className="admin-upload-sublabel">PNG, JPG or WEBP up to 5MB</span>
-                          <span className="admin-upload-hint">Click to upload or drag and drop</span>
-                        </div>
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          onChange={handleImageUpload}
-                          accept="image/png,image/jpeg,image/webp"
-                          className="admin-file-input"
-                        />
+                        <i className="material-symbols-rounded" aria-hidden="true" >add</i>
+                        <span className="admin-add-image-text">
+                          {images.length === 0 ? 'Add room photos' : 'Add more'}
+                        </span>
+                        {images.length > 0 && (
+                          <span className="admin-upload-sublabel">
+                            {images.length}/{MAX_ROOM_IMAGES}
+                          </span>
+                        )}
                       </>
                     )}
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleImageUpload}
+                      accept="image/png,image/jpeg,image/webp"
+                      className="admin-file-input"
+                    />
                   </div>
                 )}
               </div>
@@ -714,22 +780,22 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
             >
               {loading ? (
                 <span className="admin-btn-loading">
-                  <i className="fa-solid fa-spinner fa-spin" />
+                  <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
                   <span>Creating Room...</span>
                 </span>
               ) : uploading ? (
                 <span className="admin-btn-loading">
-                  <i className="fa-solid fa-spinner fa-spin" />
+                  <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
                   <span>Uploading...</span>
                 </span>
               ) : room ? (
                 <span>
-                  <i className="fa-solid fa-floppy-disk" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >save</i>
                   <span>Update Room</span>
                 </span>
               ) : (
                 <span>
-                  <i className="fa-solid fa-plus" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >add</i>
                   <span>Create Room</span>
                 </span>
               )}

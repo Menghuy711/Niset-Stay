@@ -144,9 +144,11 @@ test('management fees add-on: subscribe, create an invoice, and mark it paid', a
     await expect(page.getByText('E2E Fee Owner')).toBeVisible();
     await expect(page.getByText('$65.00').first()).toBeVisible();
 
-    // Mark it paid once the owner settles.
+    // Mark it paid once the owner settles (in-app confirm modal, no native dialog).
     const row = page.locator('.ll-queue-row', { hasText: 'E2E Fee Owner' });
     await row.getByRole('button', { name: 'Mark Paid' }).click();
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Mark Paid' }).click();
+    await expect(page.getByRole('alertdialog')).toHaveCount(0);
     await expect(row.getByText('Paid', { exact: true })).toBeVisible();
     await expect(row.getByRole('button', { name: 'Mark Paid' })).toHaveCount(0);
     await expect(row.getByRole('button', { name: 'Delete management fee for E2E Fee Room' })).toHaveCount(0);

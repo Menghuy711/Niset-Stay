@@ -43,7 +43,7 @@ export default function AddFloorModal({ floor, onSave, onClose }) {
             <h2 id="ll-floor-modal-title">{floor ? 'Edit Floor' : 'Add Floor'}</h2>
           </div>
           <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
-            <i className="fa-solid fa-xmark" />
+            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
           </button>
         </div>
 
@@ -74,12 +74,12 @@ export default function AddFloorModal({ floor, onSave, onClose }) {
             <button type="submit" className="admin-btn-primary" disabled={loading}>
               {loading ? (
                 <span className="admin-btn-loading">
-                  <i className="fa-solid fa-spinner fa-spin" />
+                  <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
                   <span>Saving...</span>
                 </span>
               ) : (
                 <span>
-                  <i className="fa-solid fa-floppy-disk" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >save</i>
                   <span>{floor ? 'Update Floor' : 'Add Floor'}</span>
                 </span>
               )}

@@ -93,15 +93,14 @@ export default function ResetPassword() {
 
                 {done ? (
                   /* ── Success state ─────────────────────────── */
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '24px 0' }}>
+                  <div className="auth-success-state">
                     <span
-                      className="material-symbols-rounded"
+                      className="material-symbols-rounded auth-success-icon"
                       aria-hidden="true"
-                      style={{ fontSize: '48px', color: 'var(--primary-100)', marginBottom: '16px' }}
                     >
                       lock_reset
                     </span>
-                    <p className="auth-card__subtitle" style={{ marginBottom: '24px' }}>
+                    <p className="auth-card__subtitle auth-card__subtitle--mb24">
                       Password updated successfully! Redirecting to sign in…
                     </p>
                     <Link to="/signin" className="auth-submit">
@@ -183,7 +182,7 @@ export default function ResetPassword() {
                       {loading ? 'Updating…' : 'Update Password'}
                     </button>
 
-                    <div className="auth-row" style={{ justifyContent: 'center', marginTop: '8px' }}>
+                    <div className="auth-row auth-row--center">
                       <Link to="/signin" className="auth-link">Back to Sign In</Link>
                     </div>
                   </form>

@@ -40,7 +40,7 @@ test('register shows role picker and toggles landlord', async ({ page }) => {
 test('landlord signs in and sees the portal in the header', async ({ page }) => {
   await loginAs(page, LANDLORD_EMAIL, LANDLORD_PASSWORD);
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.getByText('Landlord Portal')).toBeVisible();
+  await expect(page.locator('.navbar-link', { hasText: 'Landlord Portal' })).toBeVisible();
   await expect(page.locator('.header-user-pill')).toContainText('Landlord');
 });
 
@@ -101,7 +101,11 @@ test('landlord dashboard reflects newly added floor, student and bill', async ({
     await expect(page).toHaveURL(/\/$/);
     await page.getByRole('link', { name: 'Landlord Portal' }).first().click();
 
-    await expect(page.locator('.ll-metric', { hasText: 'Total Floors' }).locator('.ll-metric-value')).toHaveText('1');
+    // Floors/students/pending counts may include rows left over from earlier
+    // runs or seed/dev data, so assert they at least include the fixture above
+    // instead of pinning an exact total.
+    const floorsValue = page.locator('.ll-metric', { hasText: 'Total Floors' }).locator('.ll-metric-value');
+    await expect.poll(async () => parseInt(await floorsValue.textContent(), 10) || 0).toBeGreaterThanOrEqual(1);
 
     // Student/pending counts may transiently include rows from other parallel
     // specs, so assert they reflect at least the fixture created above.
@@ -183,7 +187,7 @@ test('student cannot open the landlord portal', async ({ page }) => {
   await loginAs(page, STUDENT_EMAIL, STUDENT_PASSWORD);
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByText('Landlord Portal')).toHaveCount(0);
-  await expect(page.getByText('My Bookings')).toBeVisible();
+  await expect(page.locator('.navbar-link', { hasText: 'My Bookings' })).toBeVisible();
 
   await page.goto('/Niset-Stay/landlord');
   await expect(page).toHaveURL(/\/signin/);

@@ -141,7 +141,7 @@ export default function Header({ activePage }) {
                   title="Logout account"
                 >
                   <span>Logout</span>
-                  <i className="fa-solid fa-right-from-bracket" />
+                  <i className="material-symbols-rounded" aria-hidden="true" >logout</i>
                 </button>
               </div>
             ) : (

@@ -5,12 +5,13 @@ import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import { Link, useParams } from 'react-router-dom';
 import newsData from '../data/newsData.js';
+import BrandIcon from '../components/BrandIcon.jsx';
 
 const SOCIALS = [
-  { key: 'fb', label: 'Facebook', icon: 'fab fa-facebook-f' },
-  { key: 'tw', label: 'Twitter', icon: 'fab fa-twitter' },
-  { key: 'te', label: 'Telegram', icon: 'fab fa-telegram' },
-  { key: 'wa', label: 'WhatsApp', icon: 'fab fa-whatsapp' },
+  { key: 'fb', label: 'Facebook', brand: 'facebook' },
+  { key: 'tw', label: 'Twitter', brand: 'twitter' },
+  { key: 'te', label: 'Telegram', brand: 'telegram' },
+  { key: 'wa', label: 'WhatsApp', brand: 'whatsapp' },
 ];
 
 const CATEGORIES = ['Scholarship', 'News', 'Activity', 'Training', 'Exchange Program', 'Announcement'];
@@ -70,7 +71,7 @@ export default function NewsDetail() {
               <span className="material-symbols-rounded" aria-hidden="true">search_off</span>
               <p>Story not found.</p>
               <Link to="/news" className="nd-back-btn">
-                <i className="fa-solid fa-arrow-left" />
+                <i className="material-symbols-rounded" aria-hidden="true" >arrow_back</i>
                 <span>Back to all news &amp; events</span>
               </Link>
             </div>
@@ -107,12 +108,12 @@ export default function NewsDetail() {
           {/* Breadcrumb */}
           <nav className="nd-breadcrumb" aria-label="Breadcrumb">
             <Link to="/" className="nd-breadcrumb-link">
-              <i className="fa-solid fa-house" />
+              <i className="material-symbols-rounded" aria-hidden="true" >home</i>
               <span>Home</span>
             </Link>
-            <i className="fa-solid fa-chevron-right nd-breadcrumb-sep" />
+            <i className="material-symbols-rounded nd-breadcrumb-sep" aria-hidden="true" >chevron_right</i>
             <Link to="/news" className="nd-breadcrumb-link">News &amp; Events</Link>
-            <i className="fa-solid fa-chevron-right nd-breadcrumb-sep" />
+            <i className="material-symbols-rounded nd-breadcrumb-sep" aria-hidden="true" >chevron_right</i>
             <span className="nd-breadcrumb-current">{article.category}</span>
           </nav>
 
@@ -126,7 +127,7 @@ export default function NewsDetail() {
                 </span>
                 {article.badge && (
                   <span className="nd-badge nd-badge-highlight">
-                    <i className="fa-solid fa-bolt" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >bolt</i>
                     {article.badge}
                   </span>
                 )}
@@ -149,7 +150,7 @@ export default function NewsDetail() {
                       <span>{article.date}</span>
                       <span className="nd-meta-divider">&bull;</span>
                       <span className="nd-read-time">
-                        <i className="fa-regular fa-clock" />
+                        <i className="material-symbols-rounded" aria-hidden="true" >schedule</i>
                         {article.readTime}
                       </span>
                     </span>
@@ -169,7 +170,7 @@ export default function NewsDetail() {
                         aria-label={`Share on ${s.label}`}
                         title={`Share on ${s.label}`}
                       >
-                        <i className={s.icon} />
+                        <BrandIcon name={s.brand} />
                       </a>
                     ))}
                     <button
@@ -179,7 +180,7 @@ export default function NewsDetail() {
                       aria-label="Copy article link"
                       title="Copy Link"
                     >
-                      <i className={copied ? "fa-solid fa-check" : "fa-solid fa-link"} />
+                      <i className="material-symbols-rounded" aria-hidden="true" >{copied ? "check" : "link"}</i>
                       {copied && <span className="nd-toast">Copied!</span>}
                     </button>
                     <button
@@ -189,7 +190,7 @@ export default function NewsDetail() {
                       aria-label="Bookmark article"
                       title={bookmarked ? "Bookmarked" : "Bookmark"}
                     >
-                      <i className={bookmarked ? "fa-solid fa-bookmark" : "fa-regular fa-bookmark"} />
+                      <i className={`material-symbols-rounded${bookmarked ? ' ms-fill' : ''}`} aria-hidden="true" >bookmark</i>
                     </button>
                   </div>
                 </div>
@@ -200,7 +201,7 @@ export default function NewsDetail() {
             <figure className="nd-hero-image">
               <img src={article.image} width="1020" height="540" alt={article.title} />
               <figcaption className="nd-hero-caption">
-                <i className="fa-solid fa-camera" />
+                <i className="material-symbols-rounded" aria-hidden="true" >photo_camera</i>
                 <span>Featured Image &mdash; {article.title}</span>
               </figcaption>
             </figure>
@@ -231,7 +232,7 @@ export default function NewsDetail() {
                 {/* Tags */}
                 <div className="nd-tags-container">
                   <div className="nd-tags-header">
-                    <i className="fa-solid fa-tags" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >sell</i>
                     <span>Article Tags</span>
                   </div>
                   <div className="nd-tags-list">
@@ -246,7 +247,7 @@ export default function NewsDetail() {
                 {/* Back to news link */}
                 <div className="nd-navigation-footer">
                   <Link to="/news" className="nd-back-btn">
-                    <i className="fa-solid fa-arrow-left" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >arrow_back</i>
                     <span>Back to all news &amp; events</span>
                   </Link>
                 </div>
@@ -270,7 +271,7 @@ export default function NewsDetail() {
                           <span className="nd-sidebar-category">{item.category}</span>
                           <h4 className="nd-sidebar-item-title">{item.title}</h4>
                           <span className="nd-sidebar-date">
-                            <i className="fa-regular fa-calendar-days" />
+                            <i className="material-symbols-rounded" aria-hidden="true" >calendar_month</i>
                             {item.date}
                           </span>
                         </div>
@@ -296,7 +297,7 @@ export default function NewsDetail() {
                             className={`nd-category-link ${isActive ? 'active' : ''}`}
                           >
                             <span className="nd-category-name">
-                              <i className="fa-solid fa-folder-open" />
+                              <i className="material-symbols-rounded" aria-hidden="true" >folder_open</i>
                               {cat}
                             </span>
                             <span className="nd-category-count">{count}</span>
@@ -310,7 +311,7 @@ export default function NewsDetail() {
                 {/* Support/Contact Banner Card */}
                 <div className="nd-sidebar-card nd-contact-card">
                   <div className="nd-contact-icon">
-                    <i className="fa-solid fa-headset" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >support_agent</i>
                   </div>
                   <h3 className="nd-contact-title">Have Questions?</h3>
                   <p className="nd-contact-text">
@@ -318,7 +319,7 @@ export default function NewsDetail() {
                   </p>
                   <Link to="/about" className="nd-contact-btn">
                     <span>Contact Support</span>
-                    <i className="fa-solid fa-arrow-right" />
+                    <i className="material-symbols-rounded" aria-hidden="true" >arrow_forward</i>
                   </Link>
                 </div>
               </aside>

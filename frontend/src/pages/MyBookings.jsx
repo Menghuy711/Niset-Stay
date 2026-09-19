@@ -62,20 +62,20 @@ export default function MyBookings() {
     if (s === 'confirmed') {
       return (
         <span className="mb-status-badge mb-status-confirmed">
-          <i className="fa-solid fa-circle-check" /> Confirmed
+          <i className="material-symbols-rounded" aria-hidden="true" >check_circle</i> Confirmed
         </span>
       );
     }
     if (s === 'cancelled') {
       return (
         <span className="mb-status-badge mb-status-cancelled">
-          <i className="fa-solid fa-circle-xmark" /> Cancelled
+          <i className="material-symbols-rounded" aria-hidden="true" >cancel</i> Cancelled
         </span>
       );
     }
     return (
       <span className="mb-status-badge mb-status-pending">
-        <i className="fa-solid fa-clock" /> Pending Review
+        <i className="material-symbols-rounded" aria-hidden="true" >schedule</i> Pending Review
       </span>
     );
   };
@@ -88,7 +88,7 @@ export default function MyBookings() {
         <div className="mb-container">
 <header className="mb-header">
               <span className="mb-badge">
-                <i className="fa-solid fa-list-check" /> My Account
+                <i className="material-symbols-rounded" aria-hidden="true" >checklist</i> My Account
               </span>
               <h1 className="mb-title">My Bookings</h1>
               <p className="mb-subtitle">View and manage your student rental reservations</p>
@@ -97,14 +97,14 @@ export default function MyBookings() {
             {!loading && !error && (
               <section className="mb-stats" aria-label="Booking summary">
                 <div className="mb-stat">
-                  <span className="mb-stat-icon"><i className="fa-solid fa-layer-group" /></span>
+                  <span className="mb-stat-icon"><i className="material-symbols-rounded" aria-hidden="true" >layers</i></span>
                   <div>
                     <strong className="mb-stat-value">{bookings.length}</strong>
                     <span className="mb-stat-label">Total Bookings</span>
                   </div>
                 </div>
                 <div className="mb-stat">
-                  <span className="mb-stat-icon mb-stat-icon-pending"><i className="fa-regular fa-clock" /></span>
+                  <span className="mb-stat-icon mb-stat-icon-pending"><i className="material-symbols-rounded" aria-hidden="true" >schedule</i></span>
                   <div>
                     <strong className="mb-stat-value">
                       {bookings.filter((b) => (b.status || 'pending').toLowerCase() === 'pending').length}
@@ -113,7 +113,7 @@ export default function MyBookings() {
                   </div>
                 </div>
                 <div className="mb-stat">
-                  <span className="mb-stat-icon mb-stat-icon-confirmed"><i className="fa-solid fa-circle-check" /></span>
+                  <span className="mb-stat-icon mb-stat-icon-confirmed"><i className="material-symbols-rounded" aria-hidden="true" >check_circle</i></span>
                   <div>
                     <strong className="mb-stat-value">
                       {bookings.filter((b) => (b.status || 'pending').toLowerCase() === 'confirmed').length}
@@ -126,33 +126,33 @@ export default function MyBookings() {
 
           {loading || authLoading ? (
             <div className="mb-loading">
-              <i className="fa-solid fa-spinner fa-spin fa-2x" style={{ color: 'var(--primary-100)' }} />
-              <p style={{ marginTop: '12px', fontSize: '1.5rem', color: 'var(--neutral-40)' }}>
+              <i className="material-symbols-rounded spinning ms-2x" aria-hidden="true" >progress_activity</i>
+              <p>
                 Loading your bookings...
               </p>
             </div>
           ) : error ? (
             <div className="mb-empty">
-              <div className="mb-empty-icon" style={{ backgroundColor: '#FEF2F2', color: '#FF2134' }}>
-                <i className="fa-solid fa-triangle-exclamation" />
+              <div className="mb-empty-icon mb-empty-icon--error">
+                <i className="material-symbols-rounded" aria-hidden="true" >warning</i>
               </div>
               <h2 className="mb-empty-title">Couldn't Load Bookings</h2>
               <p className="mb-empty-desc">{error}</p>
-              <Link to="/rent" className="btn btn-fill" style={{ display: 'inline-flex' }}>
+              <Link to="/rent" className="btn btn-fill">
                 Browse Available Rooms
               </Link>
             </div>
           ) : bookings.length === 0 ? (
             <div className="mb-empty">
               <div className="mb-empty-icon">
-                <i className="fa-solid fa-calendar-xmark" />
+                <i className="material-symbols-rounded" aria-hidden="true" >event_busy</i>
               </div>
               <h2 className="mb-empty-title">No Bookings Yet</h2>
               <p className="mb-empty-desc">
                 You haven't reserved any room yet. Browse our verified student housing and submit a reservation!
               </p>
-              <Link to="/rent" className="btn btn-fill" style={{ display: 'inline-flex' }}>
-                <i className="fa-solid fa-magnifying-glass" /> Browse Rooms
+              <Link to="/rent" className="btn btn-fill">
+                <i className="material-symbols-rounded" aria-hidden="true" >search</i> Browse Rooms
               </Link>
             </div>
           ) : (
@@ -173,13 +173,13 @@ export default function MyBookings() {
                       <span className="mb-card-price">{booking.room_price || 'Negotiable'} / month</span>
                       <div className="mb-card-meta">
                         <span className="mb-card-meta-item">
-                          <i className="fa-regular fa-calendar-days" /> Move-in: {formatDate(booking.move_in)}
+                          <i className="material-symbols-rounded" aria-hidden="true" >calendar_month</i> Move-in: {formatDate(booking.move_in)}
                         </span>
                         <span className="mb-card-meta-item">
-                          <i className="fa-solid fa-users" /> {booking.occupants ?? 1} Occupant{(booking.occupants ?? 1) > 1 ? 's' : ''}
+                          <i className="material-symbols-rounded" aria-hidden="true" >group</i> {booking.occupants ?? 1} Occupant{(booking.occupants ?? 1) > 1 ? 's' : ''}
                         </span>
                         <span className="mb-card-meta-item">
-                          <i className="fa-solid fa-phone" /> {booking.phone || 'No phone'}
+                          <i className="material-symbols-rounded" aria-hidden="true" >call</i> {booking.phone || 'No phone'}
                         </span>
                       </div>
                     </div>
@@ -195,7 +195,7 @@ export default function MyBookings() {
                       className="mb-view-inv-btn"
                       onClick={() => setSelectedBooking(booking)}
                     >
-                      <i className="fa-solid fa-file-invoice" /> View Invoice &amp; Details
+                      <i className="material-symbols-rounded" aria-hidden="true" >receipt_long</i> View Invoice &amp; Details
                     </button>
                   </div>
                 </div>

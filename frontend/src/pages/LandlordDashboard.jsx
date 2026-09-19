@@ -15,6 +15,7 @@ import BillDetailModal from '../components/landlord/BillDetailModal.jsx';
 import BillingConfigModal from '../components/landlord/BillingConfigModal.jsx';
 import ManagementFeesModal from '../components/landlord/ManagementFeesModal.jsx';
 import ConfirmDeleteModal from '../components/landlord/ConfirmDeleteModal.jsx';
+import ConfirmActionModal from '../components/landlord/ConfirmActionModal.jsx';
 import '../assets/css/admin-dashboard.css';
 import landlordCssUrl from '../assets/css/landlord.css?url';
 import usePageStylesheet from '../hooks/usePageStylesheet.js';
@@ -206,6 +207,7 @@ export default function LandlordDashboard() {
   const [configModal, setConfigModal] = useState(false);
   const [generateBusy, setGenerateBusy] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null);
 
   const [toast, setToast] = useState('');
   const toastTimerRef = useRef(null);
@@ -631,6 +633,36 @@ export default function LandlordDashboard() {
     });
   };
 
+  const requestMarkBillPaid = (bill) => {
+    const who = bill.student_name || bill.room_title || 'this bill';
+    setConfirmAction({
+      title: 'Mark bill as paid?',
+      message: `Mark the bill for ${who} as paid? This records the payment and cannot be undone.`,
+      confirmLabel: 'Mark Paid',
+      run: async () => {
+        await api.patch(`/api/landlord/bills/${bill.id}/mark-paid`);
+        setConfirmAction(null);
+        loadForTab(activeTab);
+        showToast('Bill marked as paid.');
+      },
+    });
+  };
+
+  const requestMarkFeePaid = (fee) => {
+    const who = fee.room_title || fee.owner_contact || 'this invoice';
+    setConfirmAction({
+      title: 'Mark invoice as paid?',
+      message: `Mark the invoice for ${who} as paid? This records the payment and cannot be undone.`,
+      confirmLabel: 'Mark Paid',
+      run: async () => {
+        await api.patch(`/api/landlord/management-fees/${fee.id}/mark-paid`);
+        setConfirmAction(null);
+        loadForTab(activeTab);
+        showToast('Invoice marked as paid.');
+      },
+    });
+  };
+
   const handleAssign = async (room) => {
     const studentId = assignMap[room.id];
     if (!studentId) return;
@@ -978,19 +1010,7 @@ export default function LandlordDashboard() {
                         <button
                           type="button"
                           className="ll-action ll-action-approve"
-                          onClick={async () => {
-                            const who = bill.student_name || bill.room_title || 'this bill';
-                            if (!window.confirm(
-                              `Mark the bill for ${who} as paid? This records the payment and cannot be undone.`
-                            )) return;
-                            try {
-                              await api.patch(`/api/landlord/bills/${bill.id}/mark-paid`);
-                              loadForTab(activeTab);
-                              showToast('Bill marked as paid.');
-                            } catch (err) {
-                              showToast('Could not update the bill. Please try again.');
-                            }
-                          }}
+                          onClick={() => requestMarkBillPaid(bill)}
                         >
                           <span className="material-symbols-rounded">payments</span>
                           Mark Paid
@@ -1806,19 +1826,7 @@ export default function LandlordDashboard() {
                         <button
                           type="button"
                           className="ll-action ll-action-approve"
-                          onClick={async () => {
-                            const who = bill.student_name || bill.room_title || 'this bill';
-                            if (!window.confirm(
-                              `Mark the bill for ${who} as paid? This records the payment and cannot be undone.`
-                            )) return;
-                            try {
-                              await api.patch(`/api/landlord/bills/${bill.id}/mark-paid`);
-                              loadForTab(activeTab);
-                              showToast('Bill marked as paid.');
-                            } catch (err) {
-                              showToast('Could not update the bill. Please try again.');
-                            }
-                          }}
+                          onClick={() => requestMarkBillPaid(bill)}
                         >
                           <span className="material-symbols-rounded">payments</span>
                           Mark Paid
@@ -2027,19 +2035,7 @@ export default function LandlordDashboard() {
                       <button
                         type="button"
                         className="ll-action ll-action-approve"
-                        onClick={async () => {
-                          const who = fee.room_title || fee.owner_contact || 'this invoice';
-                          if (!window.confirm(
-                            `Mark the invoice for ${who} as paid? This records the payment and cannot be undone.`
-                          )) return;
-                          try {
-                            await api.patch(`/api/landlord/management-fees/${fee.id}/mark-paid`);
-                            loadForTab(activeTab);
-                            showToast('Invoice marked as paid.');
-                          } catch (err) {
-                            showToast('Could not update the invoice. Please try again.');
-                          }
-                        }}
+                        onClick={() => requestMarkFeePaid(fee)}
                       >
                         <span className="material-symbols-rounded">payments</span>
                         Mark Paid
@@ -2305,6 +2301,15 @@ export default function LandlordDashboard() {
           message={confirmDelete.message}
           onConfirm={confirmDelete.run}
           onClose={() => setConfirmDelete(null)}
+        />
+      )}
+      {confirmAction && (
+        <ConfirmActionModal
+          title={confirmAction.title}
+          message={confirmAction.message}
+          confirmLabel={confirmAction.confirmLabel}
+          onConfirm={confirmAction.run}
+          onClose={() => setConfirmAction(null)}
         />
       )}
 
