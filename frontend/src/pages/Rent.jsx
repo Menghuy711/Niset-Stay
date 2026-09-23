@@ -14,7 +14,6 @@ import rentHero from '../assets/images/banner-1.jpg';
 
 export default function Rent() {
   const cssReady = usePageStylesheet(rentCssUrl);
-  if (!cssReady) return <PageLoader />;
   const [filterCriteria, setFilterCriteria] = useState({});
   const [properties, setProperties] = useState([]);
   const [universities, setUniversities] = useState([]);
@@ -75,6 +74,8 @@ export default function Rent() {
     fetchUniversities();
     return () => { mounted = false; };
   }, []);
+
+  if (!cssReady) return <PageLoader />;
 
   const filteredProperties = filterProperties(properties, filterCriteria, universities);
 

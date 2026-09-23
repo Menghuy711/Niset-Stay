@@ -299,15 +299,25 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
   };
 
   return (
-    <div className="admin-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="admin-modal admin-room-modal" role="dialog" aria-modal="true" aria-labelledby="admin-room-modal-title" ref={modalRef}>
-        {/* Sticky Header */}
+    <div className="admin-modal-overlay admin-room-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="admin-modal admin-room-modal admin-room-crud-modal" role="dialog" aria-modal="true" aria-labelledby="admin-room-modal-title" ref={modalRef}>
+        {/* Navy Header Band */}
         <div className="admin-modal-header">
           <div className="admin-modal-header-content">
-            <h2 id="admin-room-modal-title">{room ? 'Edit Room' : 'Add New Room'}</h2>
+            <span className="arm-identity" aria-hidden="true">
+              <i className="material-symbols-rounded">meeting_room</i>
+            </span>
+            <div className="arm-title-group">
+              <h2 id="admin-room-modal-title">{room ? 'Edit Room' : 'Add New Room'}</h2>
+              <p className="arm-header-sub">
+                {room
+                  ? 'Update this room listing so students always see the truth.'
+                  : 'List a new room — photos, price, place and people in one listing.'}
+              </p>
+            </div>
           </div>
           <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
-            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
+            <i className="material-symbols-rounded" aria-hidden="true">close</i>
           </button>
         </div>
 
@@ -766,40 +776,43 @@ export default function AdminRoomModal({ room, onSave, onClose, roomListPath = '
 
           {/* Sticky Footer */}
           <div className="admin-modal-footer">
-            <button
-              type="button"
-              className="admin-btn-secondary"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="admin-btn-primary"
-              disabled={loading || uploading}
-            >
-              {loading ? (
-                <span className="admin-btn-loading">
-                  <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
-                  <span>Creating Room...</span>
-                </span>
-              ) : uploading ? (
-                <span className="admin-btn-loading">
-                  <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
-                  <span>Uploading...</span>
-                </span>
-              ) : room ? (
-                <span>
-                  <i className="material-symbols-rounded" aria-hidden="true" >save</i>
-                  <span>Update Room</span>
-                </span>
-              ) : (
-                <span>
-                  <i className="material-symbols-rounded" aria-hidden="true" >add</i>
-                  <span>Create Room</span>
-                </span>
-              )}
-            </button>
+            <p className="arm-footer-hint">Saves straight to the live listing.</p>
+            <div className="arm-footer-actions">
+              <button
+                type="button"
+                className="admin-btn-secondary"
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="admin-btn-primary"
+                disabled={loading || uploading}
+              >
+                {loading ? (
+                  <span className="admin-btn-loading">
+                    <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
+                    <span>Creating Room...</span>
+                  </span>
+                ) : uploading ? (
+                  <span className="admin-btn-loading">
+                    <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
+                    <span>Uploading...</span>
+                  </span>
+                ) : room ? (
+                  <span>
+                    <i className="material-symbols-rounded" aria-hidden="true" >save</i>
+                    <span>Update Room</span>
+                  </span>
+                ) : (
+                  <span>
+                    <i className="material-symbols-rounded" aria-hidden="true" >add</i>
+                    <span>Create Room</span>
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
         </form>
       </div>

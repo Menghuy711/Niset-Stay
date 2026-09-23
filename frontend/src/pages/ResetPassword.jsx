@@ -10,7 +10,6 @@ import { api } from '../lib/api';
 
 export default function ResetPassword() {
   const cssReady = usePageStylesheet(signinCssUrl);
-  if (!cssReady) return <PageLoader />;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -34,6 +33,8 @@ export default function ResetPassword() {
   }, [resetToken]);
 
   useEffect(() => () => clearTimeout(redirectTimerRef.current), []);
+
+  if (!cssReady) return <PageLoader />;
 
   const passwordsMismatch = confirmTouched && confirmPassword.length > 0 && confirmPassword !== password;
 

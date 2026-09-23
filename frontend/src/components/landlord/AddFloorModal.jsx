@@ -37,10 +37,20 @@ export default function AddFloorModal({ floor, onSave, onClose }) {
 
   return (
     <div className="admin-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="admin-modal admin-room-modal" role="dialog" aria-modal="true" aria-labelledby="ll-floor-modal-title" ref={modalRef}>
+      <div className="admin-modal admin-room-modal admin-room-crud-modal" role="dialog" aria-modal="true" aria-labelledby="ll-floor-modal-title" ref={modalRef}>
         <div className="admin-modal-header">
           <div className="admin-modal-header-content">
-            <h2 id="ll-floor-modal-title">{floor ? 'Edit Floor' : 'Add Floor'}</h2>
+            <span className="arm-identity" aria-hidden="true">
+              <i className="material-symbols-rounded" aria-hidden="true" >floor</i>
+            </span>
+            <div className="arm-title-group">
+              <h2 id="ll-floor-modal-title">{floor ? 'Edit Floor' : 'Add Floor'}</h2>
+              <p className="arm-header-sub">
+                {floor
+                  ? 'Rename this level so the building always reads the truth.'
+                  : 'Give each level a clear name — students find their room without guessing.'}
+              </p>
+            </div>
           </div>
           <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
             <i className="material-symbols-rounded" aria-hidden="true" >close</i>
@@ -70,8 +80,10 @@ export default function AddFloorModal({ floor, onSave, onClose }) {
           </div>
 
           <div className="admin-modal-footer">
-            <button type="button" className="admin-btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="submit" className="admin-btn-primary" disabled={loading}>
+            <p className="arm-footer-hint">Saves straight to your building's live listing.</p>
+            <div className="arm-footer-actions">
+              <button type="button" className="admin-btn-secondary" onClick={onClose}>Cancel</button>
+              <button type="submit" className="admin-btn-primary" disabled={loading}>
               {loading ? (
                 <span className="admin-btn-loading">
                   <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
@@ -84,6 +96,7 @@ export default function AddFloorModal({ floor, onSave, onClose }) {
                 </span>
               )}
             </button>
+            </div>
           </div>
         </form>
       </div>

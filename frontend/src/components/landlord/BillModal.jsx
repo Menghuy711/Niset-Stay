@@ -17,6 +17,13 @@ function emptyOneoff() {
   return { label: '', quantity: '', rate: '', amount: '' };
 }
 
+function formatShortDate(iso) {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-');
+  const dt = new Date(Number(y), Number(m) - 1, Number(d));
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 export default function BillModal({ students, config, onOpenConfig, onSave, onClose }) {
   const modalRef = useRef(null);
   useDialog({ open: true, onClose, dialogRef: modalRef });
@@ -56,18 +63,17 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
 
   const selectedStudent = students.find((s) => s.id === Number(studentId));
 
+  const rentValue = (parseFloat(rentRate) || 0) * Math.max(parseFloat(rentQty) || 1, 0);
+
+  const usageOf = (state) => (parseFloat(state.curr) || 0) - (parseFloat(state.prev) || 0);
+  const lineAmountOf = (state) => (usageOf(state) > 0 ? usageOf(state) * (parseFloat(state.rate) || 0) : 0);
+
   const total = useMemo(() => {
     let sum = 0;
-
-    const rentValue = (parseFloat(rentRate) || 0) * Math.max(parseFloat(rentQty) || 1, 0);
     sum += rentValue;
 
-    if (elec.on) sum += (parseFloat(elec.curr) || 0) - (parseFloat(elec.prev) || 0) > 0
-      ? ((parseFloat(elec.curr) || 0) - (parseFloat(elec.prev) || 0)) * (parseFloat(elec.rate) || 0)
-      : 0;
-    if (water.on) sum += (parseFloat(water.curr) || 0) - (parseFloat(water.prev) || 0) > 0
-      ? ((parseFloat(water.curr) || 0) - (parseFloat(water.prev) || 0)) * (parseFloat(water.rate) || 0)
-      : 0;
+    if (elec.on) sum += lineAmountOf(elec);
+    if (water.on) sum += lineAmountOf(water);
 
     if (trashOn && cfg) sum += parseFloat(cfg.trash_fee) || 0;
 
@@ -86,7 +92,7 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
     });
 
     return Math.round(sum * 100) / 100;
-  }, [rentRate, rentQty, elec, water, trashOn, extraOn, oneoffs, cfg]);
+  }, [rentValue, elec, water, trashOn, extraOn, oneoffs, cfg]);
 
   const patchElec = (key, value) => setElec((prev) => ({ ...prev, [key]: value }));
   const patchWater = (key, value) => setWater((prev) => ({ ...prev, [key]: value }));
@@ -96,7 +102,6 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
 
   const buildItems = () => {
     const items = [];
-    const rentValue = (parseFloat(rentRate) || 0) * Math.max(parseFloat(rentQty) || 1, 0);
     if (rentValue > 0) {
       items.push({ kind: 'rent', label: 'Room Rent', quantity: parseFloat(rentQty) || 1, rate: parseFloat(rentRate) || 0, amount: rentValue });
     }
@@ -204,46 +209,75 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
   };
 
   const extraFees = cfg && Array.isArray(cfg.additional_fees) ? cfg.additional_fees : [];
+  const trashFee = cfg && parseFloat(cfg.trash_fee) > 0 ? parseFloat(cfg.trash_fee) : 0;
+
+  const periodNote = usageFrom && usageTo
+    ? `Period: ${formatShortDate(usageFrom)} – ${formatShortDate(usageTo)}`
+    : studentId
+      ? 'Add usage dates to total their bill'
+      : 'Select a student to build their bill';
 
   return (
-    <div className="admin-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="admin-modal admin-room-modal admin-modal-wide" role="dialog" aria-modal="true" aria-labelledby="ll-bill-modal-title" ref={modalRef}>
-        <div className="admin-modal-header">
-          <div className="admin-modal-header-content">
-            <h2 id="ll-bill-modal-title">Issue a Bill</h2>
+    <div className="admin-modal-overlay ll-bc-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div
+        className="admin-modal admin-room-modal admin-modal-wide ll-bc-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ll-bill-modal-title"
+        ref={modalRef}
+      >
+        <header className="ll-bc-hero">
+          <div className="ll-bc-hero-inner">
+            <div className="ll-bc-hero-ident">
+              <span className="ll-bc-hero-icon material-symbols-rounded" aria-hidden="true">request_quote</span>
+              <div className="ll-bc-hero-copy">
+                <h2 id="ll-bill-modal-title">Issue a Bill</h2>
+                <p>
+                  Itemize rent, meter readings, and one-off charges into a single bill for one student.
+                </p>
+              </div>
+            </div>
+            <button type="button" className="ll-bc-close" onClick={onClose} aria-label="Close modal">
+              <span className="material-symbols-rounded" aria-hidden="true">close</span>
+            </button>
           </div>
-          <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
-            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
-          </button>
-        </div>
+        </header>
 
-        {error && <div className="admin-error">{error}</div>}
+        {error && (
+          <div className="ll-bc-error" role="alert">
+            <span className="material-symbols-rounded" aria-hidden="true">error</span>
+            <span>{error}</span>
+          </div>
+        )}
 
         {!configured ? (
-          <form className="admin-room-form" onSubmit={(e) => { e.preventDefault(); onOpenConfig?.(); }}>
-            <div className="admin-form-content">
+          <form className="admin-room-form ll-bc-form" onSubmit={(e) => { e.preventDefault(); onOpenConfig?.(); }}>
+            <div className="admin-form-content ll-bc-content">
               <div className="ll-config-banner">
-                <span className="ll-config-banner-icon material-symbols-rounded">tune</span>
+                <span className="ll-config-banner-icon material-symbols-rounded" aria-hidden="true">tune</span>
                 <div>
                   <strong>Billing is not set up yet</strong>
                   <p>Set your room fee and utility rates in Billing Config before you can itemize bills.</p>
                 </div>
               </div>
             </div>
-            <div className="admin-modal-footer">
-              <button type="button" className="admin-btn-secondary" onClick={onClose}>Cancel</button>
-              <button type="submit" className="admin-btn-primary">
-                <i className="material-symbols-rounded" aria-hidden="true" >settings</i>
-                <span>Open Billing Config</span>
-              </button>
-            </div>
+            <footer className="ll-bc-footer">
+              <span className="ll-bc-live-note" style={{ maxWidth: 260 }}>Rates unlock itemized billing — configure them first.</span>
+              <div className="ll-bc-actions">
+                <button type="button" className="ll-bc-btn ll-bc-btn-ghost" onClick={onClose}>Cancel</button>
+                <button type="submit" className="ll-bc-btn ll-bc-btn-primary">
+                  <span className="material-symbols-rounded" aria-hidden="true">tune</span>
+                  <span>Open Billing Config</span>
+                </button>
+              </div>
+            </footer>
           </form>
         ) : (
-          <form onSubmit={handleSubmit} className="admin-room-form">
-            <div className="admin-form-content">
+          <form onSubmit={handleSubmit} className="admin-room-form ll-bc-form" noValidate>
+            <div className="admin-form-content ll-bc-content">
               {!hasStudentsWithRooms && (
                 <div className="ll-config-banner">
-                  <span className="ll-config-banner-icon material-symbols-rounded">groups</span>
+                  <span className="ll-config-banner-icon material-symbols-rounded" aria-hidden="true">groups</span>
                   <div>
                     <strong>No students in rooms yet</strong>
                     <p>Assign students to rooms so their bills can track the right room occupant.</p>
@@ -251,151 +285,263 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
                 </div>
               )}
 
-              <div className="admin-form-grid">
-                <div className="admin-form-group">
-                  <label htmlFor="ll-bill-student">
-                    Student <span className="admin-required">*</span>
-                  </label>
-                  <select
-                    id="ll-bill-student"
-                    value={studentId}
-                    onChange={(e) => setStudentId(e.target.value)}
-                    className="admin-input"
-                  >
-                    <option value="">Select a student…</option>
-                    {students.map((s) => (
-                      <option value={s.id} key={s.id}>{s.full_name}</option>
-                    ))}
-                  </select>
-                  {selectedStudent && (
-                    <p className="admin-hint">
-                      {selectedStudent.room_title ? `Room: ${selectedStudent.room_title}` : 'Not assigned to a room yet'}
-                    </p>
-                  )}
-                </div>
+              <section className="ll-bc-section">
+                <header className="ll-bc-section-head">
+                  <span className="ll-bc-section-icon material-symbols-rounded" aria-hidden="true">edit_note</span>
+                  <h3>Bill details</h3>
+                </header>
 
-                <div className="admin-form-group">
-                  <label htmlFor="ll-bill-month">Billing month</label>
-                  <select id="ll-bill-month" value={month} onChange={(e) => applyMonth(e.target.value)} className="admin-input">
-                    {months.map((opt) => (
-                      <option value={opt.value} key={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="admin-form-grid">
-                <div className="admin-form-group">
-                  <label htmlFor="ll-bill-usage-from">Usage from</label>
-                  <input id="ll-bill-usage-from" type="date" value={usageFrom} onChange={(e) => setUsageFrom(e.target.value)} className="admin-input" />
-                </div>
-                <div className="admin-form-group">
-                  <label htmlFor="ll-bill-usage-to">Usage to</label>
-                  <input id="ll-bill-usage-to" type="date" value={usageTo} onChange={(e) => setUsageTo(e.target.value)} className="admin-input" />
-                </div>
-                <div className="admin-form-group">
-                  <label htmlFor="ll-bill-due">
-                    Due date <span className="admin-required">*</span>
-                  </label>
-                  <input id="ll-bill-due" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required className="admin-input" />
-                </div>
-              </div>
-
-              <div className="admin-form-group">
-                <label>Bill items</label>
-                <div className="ll-bill-items">
-                  <div className="ll-bill-item ll-bill-item-rent" data-kind="rent">
-                    <div className="ll-bill-item-meta">
-                      <strong>Room Rent</strong>
-                      <span>The monthly rent for the student's room.</span>
+                <div className="ll-bc-grid">
+                  <div className="ll-bc-field">
+                    <label htmlFor="ll-bill-student">
+                      Student <span className="admin-required">*</span>
+                    </label>
+                    <div className="ll-bc-input ll-bc-select">
+                      <select
+                        id="ll-bill-student"
+                        value={studentId}
+                        onChange={(e) => setStudentId(e.target.value)}
+                        className="admin-input"
+                      >
+                        <option value="">Select a student…</option>
+                        {students.map((s) => (
+                          <option value={s.id} key={s.id}>{s.full_name}</option>
+                        ))}
+                      </select>
+                      <span className="material-symbols-rounded ll-bc-chevron" aria-hidden="true">expand_more</span>
                     </div>
-                    <div className="ll-bill-item-inputs">
-                      <label>
-                        <span className="ll-inline-label">Rate ($)</span>
-                        <input type="number" min="0" step="0.01" value={rentRate} onChange={(e) => setRentRate(e.target.value)} className="admin-input" aria-label="Rent rate" />
-                      </label>
-                      <label>
-                        <span className="ll-inline-label">Months</span>
-                        <input type="number" min="1" step="1" value={rentQty} onChange={(e) => setRentQty(e.target.value)} className="admin-input" aria-label="Rent months" />
-                      </label>
-                    </div>
+                    {selectedStudent && (
+                      <p className="ll-bc-hint">
+                        {selectedStudent.room_title ? `Room: ${selectedStudent.room_title}` : 'Not assigned to a room yet'}
+                      </p>
+                    )}
                   </div>
 
+                  <div className="ll-bc-field">
+                    <label htmlFor="ll-bill-month">Billing month</label>
+                    <div className="ll-bc-input ll-bc-select">
+                      <select id="ll-bill-month" value={month} onChange={(e) => applyMonth(e.target.value)} className="admin-input">
+                        {months.map((opt) => (
+                          <option value={opt.value} key={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                      <span className="material-symbols-rounded ll-bc-chevron" aria-hidden="true">expand_more</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="ll-bc-grid ll-bc-grid-3 ll-bi-period">
+                  <div className="ll-bc-field">
+                    <label htmlFor="ll-bill-usage-from">Usage from</label>
+                    <div className="ll-bc-input">
+                      <input id="ll-bill-usage-from" type="date" value={usageFrom} onChange={(e) => setUsageFrom(e.target.value)} className="admin-input" />
+                    </div>
+                  </div>
+                  <div className="ll-bc-field">
+                    <label htmlFor="ll-bill-usage-to">Usage to</label>
+                    <div className="ll-bc-input">
+                      <input id="ll-bill-usage-to" type="date" value={usageTo} onChange={(e) => setUsageTo(e.target.value)} className="admin-input" />
+                    </div>
+                  </div>
+                  <div className="ll-bc-field">
+                    <label htmlFor="ll-bill-due">
+                      Due date <span className="admin-required">*</span>
+                    </label>
+                    <div className="ll-bc-input">
+                      <input id="ll-bill-due" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required className="admin-input" />
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section className="ll-bc-section">
+                <header className="ll-bc-section-head">
+                  <span className="ll-bc-section-icon material-symbols-rounded" aria-hidden="true">meeting_room</span>
+                  <h3>Room &amp; rent</h3>
+                </header>
+
+                <div className="ll-bi-table">
+                  <div className="ll-bi-row ll-bi-row-rent" data-kind="rent">
+                    <span className="ll-bi-main ll-bi-main--static">
+                      <span className="ll-bi-led ll-bi-led-on" aria-hidden="true" />
+                      <span className="ll-bi-meta">
+                        <strong>Room Rent</strong>
+                        <span>The monthly rent for the student's room.</span>
+                      </span>
+                    </span>
+                    <div className="ll-bi-controls">
+                      <div className="ll-bi-field ll-bc-money">
+                        <span className="ll-bc-affix" aria-hidden="true">$</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={rentRate}
+                          onChange={(e) => setRentRate(e.target.value)}
+                          placeholder="0.00"
+                          className="admin-input"
+                          aria-label="Rent rate"
+                        />
+                        <span className="ll-bi-field-label">Rate</span>
+                      </div>
+                      <div className="ll-bi-field">
+                        <input
+                          type="number"
+                          min="1"
+                          step="1"
+                          value={rentQty}
+                          onChange={(e) => setRentQty(e.target.value)}
+                          className="admin-input"
+                          aria-label="Rent months"
+                        />
+                        <span className="ll-bi-field-label">Months</span>
+                      </div>
+                    </div>
+                    <span className="ll-bi-amount ll-bi-amount-on">${rentValue.toFixed(2)}</span>
+                  </div>
+                </div>
+              </section>
+
+              <section className="ll-bc-section">
+                <header className="ll-bc-section-head">
+                  <span className="ll-bc-section-icon material-symbols-rounded" aria-hidden="true">bolt</span>
+                  <h3>Utilities</h3>
+                  <span className="ll-bc-section-tag">metered per reading</span>
+                </header>
+
+                <div className="ll-bi-table">
                   {[{ key: 'elec', title: 'Electricity', unit: 'kWh' }, { key: 'water', title: 'Water', unit: 'm³' }].map(({ key, title, unit }) => {
                     const state = key === 'elec' ? elec : water;
                     const setter = key === 'elec' ? patchElec : patchWater;
-                    const usage = ((parseFloat(state.curr) || 0) - (parseFloat(state.prev) || 0));
-                    const lineAmount = usage > 0 ? usage * (parseFloat(state.rate) || 0) : 0;
+                    const usage = usageOf(state);
+                    const lineAmount = lineAmountOf(state);
                     return (
-                      <div className={`ll-bill-item ll-bill-item-utility${state.on ? ' ll-bill-item-on' : ''}`} data-kind={key} key={key}>
-                        <label className="ll-bill-item-check">
-                          <input
-                            type="checkbox"
-                            checked={state.on}
-                            onChange={(e) => setter('on', e.target.checked)}
-                            aria-label={`Toggle ${title} line`}
-                          />
-                          <span className="ll-bill-item-meta ll-bill-item-meta--flush">
+                      <div className={`ll-bi-row${state.on ? ' ll-bi-row-on' : ''}`} data-kind={key} key={key}>
+                        <label className="ll-bi-main">
+                          <span className="ll-bc-switch">
+                            <input
+                              type="checkbox"
+                              checked={state.on}
+                              onChange={(e) => setter('on', e.target.checked)}
+                              aria-label={`Toggle ${title} line`}
+                            />
+                            <span className="ll-bc-switch-track" aria-hidden="true" />
+                          </span>
+                          <span className="ll-bi-meta">
                             <strong>{title}</strong>
-                            <span>{usage > 0 ? `${usage.toFixed(1)} ${unit} × $${(parseFloat(state.rate) || 0).toFixed(2)}` : `Meter reading in ${unit}`}</span>
+                            <span>
+                              {state.on
+                                ? usage > 0
+                                  ? `${usage.toFixed(1)} ${unit} × $${(parseFloat(state.rate) || 0).toFixed(2)}`
+                                  : `Enter ${state.prev ? 'the current' : 'this month'} reading in ${unit}`
+                                : `Off — meter reading in ${unit}`}
+                            </span>
                           </span>
                         </label>
                         {state.on && (
-                          <div className="ll-bill-item-inputs">
-                            <label>
-                              <span className="ll-inline-label">Prev</span>
-                              <input type="number" min="0" step="1" value={state.prev} onChange={(e) => setter('prev', e.target.value)} className="admin-input" aria-label={`${title} previous reading`} />
-                            </label>
-                            <label>
-                              <span className="ll-inline-label">Curr</span>
-                              <input type="number" min="0" step="1" value={state.curr} onChange={(e) => setter('curr', e.target.value)} className="admin-input" aria-label={`${title} current reading`} />
-                            </label>
-                            <label>
-                              <span className="ll-inline-label">Rate ($)</span>
-                              <input type="number" min="0" step="0.01" value={state.rate} onChange={(e) => setter('rate', e.target.value)} className="admin-input" aria-label={`${title} rate`} />
-                            </label>
-                            <span className={`ll-bill-item-amount ll-bill-item-amount-${key}`}>{`$${lineAmount.toFixed(2)}`}</span>
+                          <div className="ll-bi-controls">
+                            <div className="ll-bi-field">
+                              <input
+                                type="number"
+                                min="0"
+                                step="1"
+                                value={state.prev}
+                                onChange={(e) => setter('prev', e.target.value)}
+                                className="admin-input"
+                                aria-label={`${title} previous reading`}
+                              />
+                              <span className="ll-bi-field-label">Prev</span>
+                            </div>
+                            <div className="ll-bi-field">
+                              <input
+                                type="number"
+                                min="0"
+                                step="1"
+                                value={state.curr}
+                                onChange={(e) => setter('curr', e.target.value)}
+                                className="admin-input"
+                                aria-label={`${title} current reading`}
+                              />
+                              <span className="ll-bi-field-label">Curr</span>
+                            </div>
+                            <div className="ll-bi-field ll-bc-money">
+                              <span className="ll-bc-affix" aria-hidden="true">$</span>
+                              <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={state.rate}
+                                onChange={(e) => setter('rate', e.target.value)}
+                                className="admin-input"
+                                aria-label={`${title} rate`}
+                              />
+                              <span className="ll-bi-field-label">Rate</span>
+                            </div>
                           </div>
                         )}
+                        <span className={`ll-bi-amount${state.on ? ' ll-bi-amount-on' : ''}`}>{state.on ? `$${lineAmount.toFixed(2)}` : '$0.00'}</span>
                       </div>
                     );
                   })}
+                </div>
+              </section>
 
-                  {cfg && parseFloat(cfg.trash_fee) > 0 && (
-                    <div className="ll-bill-item ll-bill-item-fixed" data-kind="trash">
-                      <label className="ll-bill-item-check">
-                        <input type="checkbox" checked={trashOn} onChange={(e) => setTrashOn(e.target.checked)} aria-label="Toggle trash fee" />
-                        <span className="ll-bill-item-meta ll-bill-item-meta--flush">
+              <section className="ll-bc-section">
+                <header className="ll-bc-section-head">
+                  <span className="ll-bc-section-icon material-symbols-rounded" aria-hidden="true">add_circle</span>
+                  <h3>Fees &amp; extras</h3>
+                  <span className="ll-bc-section-tag">toggle what applies</span>
+                </header>
+
+                <div className="ll-bi-table">
+                  {trashFee > 0 && (
+                    <div className="ll-bi-row ll-bi-row--fixed" data-kind="trash">
+                      <label className="ll-bi-main">
+                        <span className="ll-bc-switch">
+                          <input
+                            type="checkbox"
+                            checked={trashOn}
+                            onChange={(e) => setTrashOn(e.target.checked)}
+                            aria-label="Toggle Trash Fee"
+                          />
+                          <span className="ll-bc-switch-track" aria-hidden="true" />
+                        </span>
+                        <span className="ll-bi-meta">
                           <strong>Trash Fee</strong>
-                          <span>${parseFloat(cfg.trash_fee).toFixed(2)} per month</span>
+                          <span>${trashFee.toFixed(2)} per month</span>
                         </span>
                       </label>
-                      <span className="ll-bill-item-amount">{trashOn ? `$${parseFloat(cfg.trash_fee).toFixed(2)}` : '$0.00'}</span>
+                      <span className={`ll-bi-amount${trashOn ? ' ll-bi-amount-on' : ''}`}>{trashOn ? `$${trashFee.toFixed(2)}` : '$0.00'}</span>
                     </div>
                   )}
 
                   {extraFees.map((fee) => (
-                    <div className="ll-bill-item ll-bill-item-fixed" data-kind="additional" key={fee.name}>
-                      <label className="ll-bill-item-check">
-                        <input
-                          type="checkbox"
-                          checked={!!extraOn[fee.name]}
-                          onChange={(e) => setExtraOn((prev) => ({ ...prev, [fee.name]: e.target.checked }))}
-                          aria-label={`Toggle ${fee.name} fee`}
-                        />
-                        <span className="ll-bill-item-meta ll-bill-item-meta--flush">
+                    <div className="ll-bi-row ll-bi-row--fixed" data-kind="additional" key={fee.name}>
+                      <label className="ll-bi-main">
+                        <span className="ll-bc-switch">
+                          <input
+                            type="checkbox"
+                            checked={!!extraOn[fee.name]}
+                            onChange={(e) => setExtraOn((prev) => ({ ...prev, [fee.name]: e.target.checked }))}
+                            aria-label={`Toggle ${fee.name} fee`}
+                          />
+                          <span className="ll-bc-switch-track" aria-hidden="true" />
+                        </span>
+                        <span className="ll-bi-meta">
                           <strong>{fee.name}</strong>
                           <span>Additional monthly charge</span>
                         </span>
                       </label>
-                      <span className="ll-bill-item-amount">{extraOn[fee.name] ? `$${parseFloat(fee.amount).toFixed(2)}` : '$0.00'}</span>
+                      <span className={`ll-bi-amount${extraOn[fee.name] ? ' ll-bi-amount-on' : ''}`}>{extraOn[fee.name] ? `$${parseFloat(fee.amount).toFixed(2)}` : '$0.00'}</span>
                     </div>
                   ))}
+                </div>
 
-                  <div className="ll-bill-items-extra">
-                    <span className="ll-bill-items-extra-label">One-off items</span>
-                    {oneoffs.map((item, index) => (
-                      <div className="ll-bill-item ll-bill-item-oneoff" data-kind="oneoff" key={index}>
+                <div className="ll-bi-oneoffs">
+                  <span className="ll-bi-subhead">One-off items</span>
+                  {oneoffs.map((item, index) => (
+                    <div className="ll-bi-oneoff-row" key={index}>
+                      <div className="ll-bc-input">
                         <input
                           type="text"
                           value={item.label}
@@ -404,69 +550,79 @@ export default function BillModal({ students, config, onOpenConfig, onSave, onCl
                           className="admin-input"
                           aria-label={`One-off item name ${index + 1}`}
                         />
+                      </div>
+                      <div className="ll-bc-input ll-bc-money">
+                        <span className="ll-bc-affix" aria-hidden="true">$</span>
                         <input
                           type="number"
                           min="0"
                           step="0.01"
                           value={item.amount}
                           onChange={(e) => updateOneoff(index, 'amount', e.target.value)}
-                          placeholder="Amount ($)"
+                          placeholder="0.00"
                           className="admin-input"
                           aria-label={`One-off amount ${index + 1}`}
                         />
-                        <button
-                          type="button"
-                          className="ll-fee-item-remove"
-                          disabled={oneoffs.length === 1}
-                          onClick={() => setOneoffs((prev) => prev.filter((_, i) => i !== index))}
-                          aria-label={`Remove one-off item ${index + 1}`}
-                        >
-                          <span className="material-symbols-rounded">close</span>
-                        </button>
                       </div>
-                    ))}
-                    <button type="button" className="ll-fee-item-add" onClick={() => setOneoffs((prev) => [...prev, emptyOneoff()])}>
-                      <span className="material-symbols-rounded">add</span>
-                      Add Item
-                    </button>
+                      <button
+                        type="button"
+                        className="ll-bc-fee-remove"
+                        disabled={oneoffs.length === 1}
+                        onClick={() => setOneoffs((prev) => prev.filter((_, i) => i !== index))}
+                        aria-label={`Remove one-off item ${index + 1}`}
+                      >
+                        <span className="material-symbols-rounded" aria-hidden="true">close</span>
+                      </button>
+                    </div>
+                  ))}
+                  <button type="button" className="ll-bc-fee-add" onClick={() => setOneoffs((prev) => [...prev, emptyOneoff()])}>
+                    <span className="material-symbols-rounded" aria-hidden="true">add</span>
+                    Add item
+                  </button>
+                </div>
+
+                <div className="ll-bi-note-wrap">
+                  <div className="ll-bc-field">
+                    <label htmlFor="ll-bill-note">Note <span className="ll-bc-muted">(shown on the invoice)</span></label>
+                    <textarea
+                      id="ll-bill-note"
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
+                      placeholder="e.g., Rent for September — pay via ABA (Heng Sok)"
+                      rows={2}
+                      className="admin-textarea ll-bi-note"
+                    />
                   </div>
                 </div>
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="ll-bill-note">Note</label>
-                <textarea
-                  id="ll-bill-note"
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder="e.g., Rent for September — pay via ABA (Heng Sok)"
-                  rows={2}
-                  className="admin-textarea"
-                />
-              </div>
-
-              <div className="ll-bill-total" id="ll-bill-total">
-                <span>Total</span>
-                <strong>${total.toFixed(2)}</strong>
-              </div>
+              </section>
             </div>
 
-            <div className="admin-modal-footer">
-              <button type="button" className="admin-btn-secondary" onClick={onClose}>Cancel</button>
-              <button type="submit" className="admin-btn-primary" disabled={loading}>
-                {loading ? (
-                  <span className="admin-btn-loading">
-                    <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
-                    <span>Issuing...</span>
-                  </span>
-                ) : (
-                  <span>
-                    <i className="material-symbols-rounded" aria-hidden="true" >receipt_long</i>
-                    <span>Issue Bill</span>
-                  </span>
-                )}
-              </button>
-            </div>
+            <footer className="ll-bc-footer">
+<div className="ll-bc-live" aria-live="polite">
+                  <span className="ll-bc-live-icon material-symbols-rounded" aria-hidden="true">receipt</span>
+                  <div className="ll-bc-live-copy" id="ll-bill-total">
+                    <span className="ll-bc-live-label">Bill total</span>
+                    <strong className="ll-bc-live-value">${total.toFixed(2)}</strong>
+                  </div>
+                  <span className="ll-bc-live-note">{periodNote}</span>
+                </div>
+              <div className="ll-bc-actions">
+                <button type="button" className="ll-bc-btn ll-bc-btn-ghost" onClick={onClose}>Cancel</button>
+                <button type="submit" className="ll-bc-btn ll-bc-btn-primary" disabled={loading}>
+                  {loading ? (
+                    <span className="admin-btn-loading">
+                      <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
+                      <span>Issuing...</span>
+                    </span>
+                  ) : (
+                    <span>
+                      <i className="material-symbols-rounded" aria-hidden="true" >receipt_long</i>
+                      <span>Issue Bill</span>
+                    </span>
+                  )}
+                </button>
+              </div>
+            </footer>
           </form>
         )}
       </div>

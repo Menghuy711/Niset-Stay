@@ -144,163 +144,233 @@ export default function StudentModal({ student, rooms = [], onSave, onClose }) {
   };
 
   return (
-    <div className="admin-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="admin-modal admin-room-modal admin-modal-wide" role="dialog" aria-modal="true" aria-labelledby="ll-student-modal-title" ref={modalRef}>
-        <div className="admin-modal-header">
-          <div className="admin-modal-header-content">
-            <h2 id="ll-student-modal-title">{student ? 'Edit Student' : 'Add Student'}</h2>
+    <div className="premium-student-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div
+        className="premium-student-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ll-student-modal-title"
+        aria-describedby="ll-student-modal-desc"
+        ref={modalRef}
+      >
+        <div className="psm-header">
+          <div className="psm-header-main">
+            <span className="psm-identity" aria-hidden="true">
+              <i className="material-symbols-rounded">badge</i>
+            </span>
+            <div className="psm-header-text">
+              <h2 id="ll-student-modal-title">{student ? 'Edit Student' : 'Add Student'}</h2>
+              <p id="ll-student-modal-desc" className="psm-header-sub">
+                {student
+                  ? `Keep ${student.full_name}'s stay details up to date.`
+                  : 'Record a new resident — name, lease and ID in one place.'}
+              </p>
+            </div>
           </div>
-          <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">
-            <i className="material-symbols-rounded" aria-hidden="true" >close</i>
+          <button type="button" className="psm-close" onClick={onClose} aria-label="Close modal">
+            <i className="material-symbols-rounded" aria-hidden="true">close</i>
           </button>
         </div>
 
-        {error && <div className="admin-error">{error}</div>}
+        {error && (
+          <div className="psm-error" role="alert">
+            <i className="material-symbols-rounded" aria-hidden="true">error</i>
+            <span>{error}</span>
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit} className="admin-room-form">
-          <div className="admin-form-content">
-            <div className="admin-form-grid">
-              <div className="admin-form-group">
-                <label htmlFor="ll-student-name">
-                  Full name <span className="admin-required">*</span>
-                </label>
-                <input
-                  id="ll-student-name"
-                  type="text"
-                  value={form.fullName}
-                  onChange={set('fullName')}
-                  placeholder="e.g., Chan Dara"
-                  required
-                  autoFocus
-                  className="admin-input"
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="ll-student-type">Student type</label>
-                <div className="ll-student-type-seg" role="group" aria-label="Student type">
-                  {[
-                    { key: 'monthly', label: 'Monthly' },
-                    { key: 'daily', label: 'Daily' },
-                  ].map((opt) => (
-                    <button
-                      key={opt.key}
-                      type="button"
-                      className={`ll-seg-btn${form.studentType === opt.key ? ' active' : ''}`}
-                      aria-pressed={form.studentType === opt.key}
-                      onClick={() => setForm((prev) => ({ ...prev, studentType: opt.key }))}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="admin-form-grid">
-              <div className="admin-form-group">
-                <label htmlFor="ll-student-phone">Phone</label>
-                <div className="admin-input-wrapper">
-                  <i className="material-symbols-rounded" aria-hidden="true" >call</i>
-                  <input
-                    id="ll-student-phone"
-                    type="tel"
-                    value={form.phone}
-                    onChange={set('phone')}
-                    placeholder="e.g., 012 345 678"
-                    className="admin-input"
-                  />
-                </div>
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="ll-student-email">Email</label>
-                <div className="admin-input-wrapper">
-                  <i className="material-symbols-rounded" aria-hidden="true" >mail</i>
-                  <input
-                    id="ll-student-email"
-                    type="email"
-                    value={form.email}
-                    onChange={set('email')}
-                    placeholder="e.g., dara@example.com"
-                    className="admin-input"
-                  />
-                  <p className="admin-hint">Leave empty and one is generated for you.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="admin-form-grid">
-              <div className="admin-form-group">
-                <label htmlFor="ll-student-nationality">Nationality</label>
-                <input
-                  id="ll-student-nationality"
-                  type="text"
-                  value={form.nationality}
-                  onChange={set('nationality')}
-                  placeholder="e.g., Khmer, Thai, Chinese…"
-                  className="admin-input"
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="ll-student-visa">Visa expiry date</label>
-                <input
-                  id="ll-student-visa"
-                  type="date"
-                  value={form.visaExpiry}
-                  onChange={set('visaExpiry')}
-                  className="admin-input"
-                />
-                <p className="admin-hint">You'll get a warning when the visa is expiring soon.</p>
-              </div>
-            </div>
-
-            <div className="admin-form-grid">
-              <div className="admin-form-group">
-                <label htmlFor="ll-student-contract-start">Contract start</label>
-                <input
-                  id="ll-student-contract-start"
-                  type="date"
-                  value={form.contractStart}
-                  onChange={set('contractStart')}
-                  className="admin-input"
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label htmlFor="ll-student-contract-end">Contract end</label>
-                <input
-                  id="ll-student-contract-end"
-                  type="date"
-                  value={form.contractEnd}
-                  onChange={set('contractEnd')}
-                  min={form.contractStart}
-                  className="admin-input"
-                />
-              </div>
-            </div>
-
-            <div className="admin-form-group">
-              <label htmlFor="ll-student-doc">ID / Passport <span className="admin-hint">(optional, under 5MB)</span></label>
-              {previewIdDoc ? (
-                <div className="ll-doc-row">
-                  <img src={previewIdDoc} alt="Uploaded ID document" className="ll-doc-preview" />
-                  <div className="ll-doc-actions">
-                    <span className="ll-doc-ok">
-                      <i className="material-symbols-rounded" aria-hidden="true" >check_circle</i> Document attached
-                    </span>
-                    <button type="button" className="admin-btn-secondary" onClick={handleRemoveDoc}>
-                      <i className="material-symbols-rounded" aria-hidden="true" >delete</i> Remove
-                    </button>
+        <form onSubmit={handleSubmit} className="psm-form">
+          <div className="psm-body">
+            {/* Section 1: Personal Details */}
+            <section className="psm-section" aria-labelledby="psm-sec-personal">
+              <header className="psm-section-title">
+                <i className="material-symbols-rounded" aria-hidden="true">person</i>
+                <h3 id="psm-sec-personal">Personal Details</h3>
+              </header>
+              <div className="psm-grid">
+                <div className="psm-group">
+                  <label htmlFor="ll-student-name">
+                    Full name <span className="psm-required">*</span>
+                  </label>
+                  <div className="psm-input-wrapper">
+                    <i className="material-symbols-rounded" aria-hidden="true">badge</i>
+                    <input
+                      id="ll-student-name"
+                      type="text"
+                      value={form.fullName}
+                      onChange={set('fullName')}
+                      placeholder="e.g., Chan Dara"
+                      required
+                      autoFocus
+                      className="psm-input"
+                    />
                   </div>
                 </div>
-              ) : (
-                <div className="ll-doc-upload">
-                  <label htmlFor="ll-student-doc-file" className={`ll-doc-dropzone${uploading ? ' ll-doc-busy' : ''}`}>
-                    <i className={`material-symbols-rounded${uploading ? ' spinning' : ''}`} aria-hidden="true" >{uploading ? 'progress_activity' : 'image'}</i>
-                    <span>{uploading ? 'Uploading…' : 'Click to upload an ID or passport photo'}</span>
+
+                <div className="psm-group">
+                  <label id="ll-student-type-label">Student type</label>
+                  <div className="psm-seg" role="group" aria-labelledby="ll-student-type-label">
+                    {[
+                      { key: 'monthly', label: 'Monthly' },
+                      { key: 'daily', label: 'Daily' },
+                    ].map((opt) => (
+                      <button
+                        key={opt.key}
+                        type="button"
+                        className={`psm-seg-btn${form.studentType === opt.key ? ' active' : ''}`}
+                        aria-pressed={form.studentType === opt.key}
+                        onClick={() => setForm((prev) => ({ ...prev, studentType: opt.key }))}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="psm-group">
+                  <label htmlFor="ll-student-phone">Phone</label>
+                  <div className="psm-input-wrapper">
+                    <i className="material-symbols-rounded" aria-hidden="true">call</i>
+                    <input
+                      id="ll-student-phone"
+                      type="tel"
+                      value={form.phone}
+                      onChange={set('phone')}
+                      placeholder="e.g., 012 345 678"
+                      className="psm-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="psm-group">
+                  <label htmlFor="ll-student-email">Email</label>
+                  <div className="psm-input-wrapper">
+                    <i className="material-symbols-rounded" aria-hidden="true">mail</i>
+                    <input
+                      id="ll-student-email"
+                      type="email"
+                      value={form.email}
+                      onChange={set('email')}
+                      placeholder="e.g., dara@example.com"
+                      className="psm-input"
+                    />
+                  </div>
+                  <p className="psm-hint">Leave empty to auto-generate.</p>
+                </div>
+
+                <div className="psm-group">
+                  <label htmlFor="ll-student-nationality">Nationality</label>
+                  <div className="psm-input-wrapper">
+                    <i className="material-symbols-rounded" aria-hidden="true">public</i>
+                    <input
+                      id="ll-student-nationality"
+                      type="text"
+                      value={form.nationality}
+                      onChange={set('nationality')}
+                      placeholder="e.g., Khmer, Thai…"
+                      className="psm-input"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Section 2: Lease & Stay Information */}
+            <section className="psm-section" aria-labelledby="psm-sec-lease">
+              <header className="psm-section-title">
+                <i className="material-symbols-rounded" aria-hidden="true">description</i>
+                <h3 id="psm-sec-lease">Lease & Stay Information</h3>
+              </header>
+              <div className="psm-grid">
+                <div className="psm-group">
+                  <label htmlFor="ll-student-visa">Visa expiry date</label>
+                  <div className="psm-input-wrapper">
+                    <input
+                      id="ll-student-visa"
+                      type="date"
+                      value={form.visaExpiry}
+                      onChange={set('visaExpiry')}
+                      className="psm-input"
+                    />
+                  </div>
+                  <p className="psm-hint">You'll get a warning when expiring soon.</p>
+                </div>
+
+                {!student && (
+                  <div className="psm-group">
+                    <label htmlFor="ll-student-room">
+                      Assign to room <span className="psm-optional">(optional)</span>
+                    </label>
+                    <select id="ll-student-room" value={form.roomId} onChange={set('roomId')} className="psm-input">
+                      <option value="">Assign later</option>
+                      {vacantRooms.map((room) => (
+                        <option value={room.id} key={room.id}>{room.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div className="psm-group">
+                  <label htmlFor="ll-student-contract-start">Contract start</label>
+                  <input
+                    id="ll-student-contract-start"
+                    type="date"
+                    value={form.contractStart}
+                    onChange={set('contractStart')}
+                    className="psm-input"
+                  />
+                </div>
+
+                <div className="psm-group">
+                  <label htmlFor="ll-student-contract-end">Contract end</label>
+                  <input
+                    id="ll-student-contract-end"
+                    type="date"
+                    value={form.contractEnd}
+                    onChange={set('contractEnd')}
+                    min={form.contractStart}
+                    className="psm-input"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Section 3: Attachments & Notes */}
+            <section className="psm-section" aria-labelledby="psm-sec-attach">
+              <header className="psm-section-title">
+                <i className="material-symbols-rounded" aria-hidden="true">attachment</i>
+                <h3 id="psm-sec-attach">Attachments & Notes</h3>
+              </header>
+              <div className="psm-grid">
+                <div className="psm-group psm-grid-full">
+                  <label htmlFor="ll-student-doc">
+                    ID / Passport <span className="psm-optional">(optional, under 5MB)</span>
                   </label>
+                  {previewIdDoc ? (
+                    <div className="ll-doc-row">
+                      <img src={previewIdDoc} alt="Uploaded ID document" className="ll-doc-preview" />
+                      <div className="ll-doc-actions">
+                        <span className="ll-doc-ok">
+                          <i className="material-symbols-rounded" aria-hidden="true">check_circle</i> Document attached
+                        </span>
+                        <button type="button" className="psm-btn-remove" onClick={handleRemoveDoc}>
+                          <i className="material-symbols-rounded" aria-hidden="true">delete</i> Remove
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <label htmlFor="ll-student-doc-file" className={`psm-dropzone${uploading ? ' psm-dropzone-busy' : ''}`}>
+                      <span className="psm-dropzone-ic" aria-hidden="true">
+                        <i className={`material-symbols-rounded${uploading ? ' spinning' : ''}`}>
+                          {uploading ? 'progress_activity' : 'cloud_upload'}
+                        </i>
+                      </span>
+                      <span className="psm-dropzone-title">
+                        {uploading ? 'Uploading…' : 'Click to upload ID / Passport'}
+                      </span>
+                      {!uploading && <span className="psm-hint">PNG, JPG or WEBP · max 5MB</span>}
+                    </label>
+                  )}
                   <input
                     id="ll-student-doc-file"
                     ref={fileInputRef}
@@ -311,51 +381,41 @@ export default function StudentModal({ student, rooms = [], onSave, onClose }) {
                     hidden
                   />
                 </div>
-              )}
-            </div>
 
-            <div className="admin-form-grid">
-              {!student && (
-                <div className="admin-form-group">
-                  <label htmlFor="ll-student-room">Assign to room <span className="admin-hint">(optional)</span></label>
-                  <select id="ll-student-room" value={form.roomId} onChange={set('roomId')} className="admin-input">
-                    <option value="">Assign later</option>
-                    {vacantRooms.map((room) => (
-                      <option value={room.id} key={room.id}>{room.title}</option>
-                    ))}
-                  </select>
+                <div className="psm-group psm-grid-full">
+                  <label htmlFor="ll-student-notes">Notes</label>
+                  <textarea
+                    id="ll-student-notes"
+                    value={form.notes}
+                    onChange={set('notes')}
+                    placeholder="Anything handy — lease length, deposit, preferences…"
+                    rows={3}
+                    className="psm-input"
+                  />
                 </div>
-              )}
-              <div className="admin-form-group">
-                <label htmlFor="ll-student-notes">Notes</label>
-                <textarea
-                  id="ll-student-notes"
-                  value={form.notes}
-                  onChange={set('notes')}
-                  placeholder="Anything handy — lease length, deposit, preferences…"
-                  rows={3}
-                  className="admin-textarea"
-                />
               </div>
-            </div>
+            </section>
           </div>
 
-          <div className="admin-modal-footer">
-            <button type="button" className="admin-btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="submit" className="admin-btn-primary" disabled={loading}>
-              {loading ? (
-                <span className="admin-btn-loading">
-                  <i className="material-symbols-rounded spinning" aria-hidden="true" >progress_activity</i>
-                  <span>Saving...</span>
-                </span>
-              ) : (
-                <span>
-                  <i className="material-symbols-rounded" aria-hidden="true" >save</i>
-                  <span>{student ? 'Update Student' : 'Add Student'}</span>
-                </span>
-              )}
-            </button>
-          </div>
+          <footer className="psm-footer">
+            <span className="psm-footer-hint">Fields marked * are required.</span>
+            <div className="psm-footer-actions">
+              <button type="button" className="psm-btn-cancel" onClick={onClose}>Cancel</button>
+              <button type="submit" className="psm-btn-submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <i className="material-symbols-rounded spinning" aria-hidden="true">progress_activity</i>
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="material-symbols-rounded" aria-hidden="true">check</i>
+                    <span>{student ? 'Update Student' : 'Add Student'}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </footer>
         </form>
       </div>
     </div>

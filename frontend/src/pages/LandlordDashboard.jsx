@@ -215,7 +215,6 @@ export default function LandlordDashboard() {
   const visibleBillsRef = useRef([]);
 
   const cssReady = usePageStylesheet(landlordCssUrl);
-  if (!cssReady) return <PageLoader />;
 
   useEffect(() => {
     loadForTab(activeTab);
@@ -572,11 +571,6 @@ export default function LandlordDashboard() {
     setBillModal(false);
     loadForTab(activeTab);
     showToast('Bill issued.');
-  };
-
-  const openFeesForRoom = (room) => {
-    setFeeRoomId(room.id);
-    setActiveTab('fees');
   };
 
   const openCreateFee = () => {
@@ -1029,37 +1023,44 @@ export default function LandlordDashboard() {
     );
   };
 
-  const renderRoomsToolbar = () => (
-    <div className="ll-room-toolbar">
-      <div className="ll-status-seg" role="group" aria-label="Filter rooms by status">
-        {[
-          { key: 'all', label: 'All' },
-          { key: 'vacant', label: 'Vacant' },
-          { key: 'occupied', label: 'Occupied' },
-        ].map((filter) => (
-          <button
-            key={filter.key}
-            type="button"
-            className={`ll-seg-btn${roomStatus === filter.key ? ' active' : ''}`}
-            aria-pressed={roomStatus === filter.key}
-            onClick={() => setRoomStatus(filter.key)}
-          >
-            {filter.label}
-          </button>
-        ))}
+  const renderRoomsToolbar = () => {
+    const vacant = rooms.filter((room) => room.status !== 'occupied').length;
+    const occupied = rooms.length - vacant;
+    const roomCounts = { all: rooms.length, vacant, occupied };
+    return (
+      <div className="ll-room-toolbar">
+        <div className="ll-status-seg" role="group" aria-label="Filter rooms by status">
+          {[
+            { key: 'all', label: 'All' },
+            { key: 'vacant', label: 'Vacant' },
+            { key: 'occupied', label: 'Occupied' },
+          ].map((filter) => (
+            <button
+              key={filter.key}
+              type="button"
+              className={`ll-seg-btn${roomStatus === filter.key ? ' active' : ''}`}
+              aria-pressed={roomStatus === filter.key}
+              data-filter={filter.key}
+              onClick={() => setRoomStatus(filter.key)}
+            >
+              {filter.label}
+              {roomCounts[filter.key] > 0 && <span className="ll-seg-count">{roomCounts[filter.key]}</span>}
+            </button>
+          ))}
+        </div>
+        <div className="ll-room-search">
+          <span className="material-symbols-rounded">search</span>
+          <input
+            type="search"
+            placeholder="Search rooms by name…"
+            value={roomSearch}
+            onChange={(e) => setRoomSearch(e.target.value)}
+            aria-label="Search rooms by name"
+          />
+        </div>
       </div>
-      <div className="ll-room-search">
-        <span className="material-symbols-rounded">search</span>
-        <input
-          type="search"
-          placeholder="Search rooms by name…"
-          value={roomSearch}
-          onChange={(e) => setRoomSearch(e.target.value)}
-          aria-label="Search rooms by name"
-        />
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderRooms = () => {
     const query = roomSearch.trim().toLowerCase();
@@ -1070,8 +1071,52 @@ export default function LandlordDashboard() {
       if (query && !room.title.toLowerCase().includes(query)) return false;
       return true;
     });
+    const vacantCount = rooms.filter((room) => room.status !== 'occupied').length;
+    const occupiedCount = rooms.length - vacantCount;
+    const occRate = rooms.length ? Math.round((occupiedCount / rooms.length) * 100) : 0;
     const activeFloor = floorFilter ? floors.find((f) => f.id === floorFilter) : null;
     const unassignedStudents = students.filter((s) => !s.room_id);
+
+    const portfolioHero = (
+      <div className="ll-list-hero" aria-label="Portfolio overview">
+        <span className="ll-list-hero-ic material-symbols-rounded" aria-hidden="true">meeting_room</span>
+        <div className="ll-list-hero-head">
+          <strong>Room Portfolio</strong>
+          <div className="ll-list-hero-head-row">
+            <small>
+              {rooms.length} room{rooms.length === 1 ? '' : 's'} listed
+            </small>
+            {vacantCount > 0 && (
+              <button
+                type="button"
+                className="ll-list-vacant"
+                aria-pressed={roomStatus === 'vacant'}
+                onClick={() => setRoomStatus('vacant')}
+              >
+                <span className="material-symbols-rounded" aria-hidden="true">cottage</span>
+                <span className="ll-list-vacant-copy">
+                  <strong>{vacantCount} vacant</strong>
+                  <small>ready to rent</small>
+                </span>
+              </button>
+            )}
+          </div>
+        </div>
+        <div
+          className="ll-list-meter"
+          role="progressbar"
+          aria-label="Occupancy rate"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow={occRate}
+        >
+          <span className="ll-list-meter-track">
+            <span className="ll-list-meter-fill" style={{ transform: `scaleX(${occRate / 100})` }} />
+          </span>
+          <span className="ll-list-meter-label">{occRate}% occupied</span>
+        </div>
+      </div>
+    );
 
     if (rooms.length === 0) {
       return (
@@ -1091,6 +1136,7 @@ export default function LandlordDashboard() {
       const filtersActive = roomStatus !== 'all' || query;
       return (
         <>
+          {portfolioHero}
           {activeFloor && (
             <div className="ll-filter-chip" role="status">
               <span className="material-symbols-rounded">stairs</span>
@@ -1132,6 +1178,7 @@ export default function LandlordDashboard() {
 
     return (
       <>
+        {portfolioHero}
         {activeFloor && (
           <div className="ll-filter-chip" role="status">
             <span className="material-symbols-rounded">stairs</span>
@@ -1152,7 +1199,7 @@ export default function LandlordDashboard() {
                 <span className="ll-prop-placeholder material-symbols-rounded">image</span>
               )}
               {room.badge && <span className="ll-prop-chip">{room.badge}</span>}
-              <span className="ll-room-tag ll-room-tag-status">
+              <span className={`ll-room-tag ll-room-tag-status ${room.status === 'occupied' ? 'll-room-tag-occupied' : 'll-room-tag-vacant'}`}>
                 <span className="material-symbols-rounded">{room.status === 'occupied' ? 'person_pin' : 'cottage'}</span>
                 {room.status === 'occupied' ? (room.student_name || 'Occupied') : 'Vacant'}
               </span>
@@ -1161,15 +1208,6 @@ export default function LandlordDashboard() {
                 <span className="ll-prop-priceper">/month</span>
               </span>
               <div className="ll-prop-actions">
-                <button
-                  type="button"
-                  className="ll-prop-action ll-fees"
-                  onClick={() => openFeesForRoom(room)}
-                  title={`Fees for ${room.title}`}
-                  aria-label={`Management fees for ${room.title}`}
-                >
-                  <span className="material-symbols-rounded">request_quote</span>
-                </button>
                 <button
                   type="button"
                   className="ll-prop-action ll-edit"
@@ -1280,90 +1318,117 @@ export default function LandlordDashboard() {
   };
 
   const renderBookings = () => {
-    if (bookings.length === 0) {
-      return (
-        <div className="ll-state">
-          <span className="ll-state-icon material-symbols-rounded">event_busy</span>
-          <h3>No booking requests yet</h3>
-          <p>Once students reserve one of your rooms, requests will show up here for you to approve or reject.</p>
-        </div>
-      );
-    }
+    const pendingCount = bookings.filter((b) => b.status === 'pending').length;
 
     return (
-      <div className="ll-queue">
-        <div className="ll-queue-head" aria-hidden="true">
-          <span>Student</span>
-          <span>Room</span>
-          <span>Move-in</span>
-          <span>Status</span>
-          <span>Total</span>
-          <span>Actions</span>
-        </div>
-        {bookings.map((booking) => (
-          <div className="ll-queue-row" key={booking.id}>
-            <div className="ll-student">
-              <span className="ll-student-avatar">{getInitials(booking.full_name)}</span>
-              <div className="ll-student-info">
-                <strong>{booking.full_name || 'N/A'}</strong>
-                <small>
-                  <span className="material-symbols-rounded">phone</span>
-                  {booking.phone || 'No phone'}
-                </small>
-              </div>
-            </div>
-
-            <div className="ll-queue-room">
-              <strong>{booking.room_title || 'N/A'}</strong>
-            </div>
-
-            <div className="ll-queue-date">
-              <span className="material-symbols-rounded">login</span>
-              {formatDate(booking.move_in)}
-            </div>
-
-            <span className={`ll-status ${getStatusBadgeClass(booking.status)}`}>
-              {formatStatus(booking.status)}
-            </span>
-
-            <div className="ll-queue-total">
-              <strong>{formatTotalPrice(booking.total_price)}</strong>
-            </div>
-
-            <div className="ll-queue-actions">
-              {booking.status === 'pending' && (
-                <>
-                  <button
-                    className="ll-action ll-action-approve"
-                    onClick={() => handleBookingStatusUpdate(booking.id, 'confirmed')}
-                  >
-                    <span className="material-symbols-rounded">check_circle</span>
-                    Approve
-                  </button>
-                  <button
-                    className="ll-action ll-action-reject"
-                    onClick={() => handleBookingStatusUpdate(booking.id, 'cancelled')}
-                  >
-                    <span className="material-symbols-rounded">cancel</span>
-                    Reject
-                  </button>
-                </>
-              )}
-              {booking.status === 'confirmed' && (
-                <button
-                  className="ll-action ll-action-cancel"
-                  onClick={() => handleBookingStatusUpdate(booking.id, 'cancelled')}
-                >
-                  <span className="material-symbols-rounded">block</span>
-                  Cancel
-                </button>
-              )}
-              {booking.status === 'cancelled' && (
-                <span className="ll-queue-none">No actions</span>
-              )}
-            </div>
+      <div className="ll-bk">
+        <header className="ll-bk-banner">
+          <span className="ll-bk-banner-icon material-symbols-rounded" aria-hidden="true">
+            event_available
+          </span>
+          <div className="ll-bk-banner-copy">
+            <strong>Booking Requests</strong>
+            <p>Approve, reject or cancel reservations as they arrive — students see your decision instantly.</p>
           </div>
-        ))}
+          {pendingCount > 0 ? (
+            <span className="ll-bk-pending">
+              <i className="material-symbols-rounded" aria-hidden="true">hourglass_top</i>
+              {pendingCount} awaiting your decision
+            </span>
+          ) : (
+            <span className="ll-bk-updated">
+              <i className="material-symbols-rounded" aria-hidden="true">inbox</i>
+              All caught up
+            </span>
+          )}
+        </header>
+
+        {bookings.length === 0 ? (
+          <div className="ll-state">
+            <span className="ll-state-icon material-symbols-rounded">event_busy</span>
+            <h3>No booking requests yet</h3>
+            <p>Once students reserve one of your rooms, requests will show up here for you to approve or reject.</p>
+          </div>
+        ) : (
+          <div className="ll-queue ll-bk-queue">
+            <div className="ll-queue-head" aria-hidden="true">
+              <span>Student</span>
+              <span>Room</span>
+              <span>Move-in</span>
+              <span>Status</span>
+              <span>Total</span>
+              <span>Actions</span>
+            </div>
+            {bookings.map((booking) => (
+              <div className="ll-queue-row" key={booking.id}>
+                <div className="ll-student">
+                  <span className="ll-student-avatar">{getInitials(booking.full_name)}</span>
+                  <div className="ll-student-info">
+                    <strong>{booking.full_name || 'N/A'}</strong>
+                    <small>
+                      <span className="material-symbols-rounded">phone</span>
+                      {booking.phone || 'No phone'}
+                    </small>
+                  </div>
+                </div>
+
+                <div className="ll-queue-room">
+                  <span className="ll-bk-room-ic material-symbols-rounded" aria-hidden="true">meeting_room</span>
+                  <div className="ll-bk-room-copy">
+                    <strong>{booking.room_title || 'N/A'}</strong>
+                    {booking.room_price != null && <small>${booking.room_price}/month</small>}
+                  </div>
+                </div>
+
+                <div className="ll-queue-date">
+                  <span className="material-symbols-rounded">login</span>
+                  {formatDate(booking.move_in)}
+                </div>
+
+                <span className={`ll-status ${getStatusBadgeClass(booking.status)}`}>
+                  {formatStatus(booking.status)}
+                </span>
+
+                <div className="ll-queue-total">
+                  <strong>{formatTotalPrice(booking.total_price)}</strong>
+                </div>
+
+                <div className="ll-queue-actions">
+                  {booking.status === 'pending' && (
+                    <>
+                      <button
+                        className="ll-action ll-action-approve"
+                        onClick={() => handleBookingStatusUpdate(booking.id, 'confirmed')}
+                      >
+                        <span className="material-symbols-rounded">check_circle</span>
+                        Approve
+                      </button>
+                      <button
+                        className="ll-action ll-action-reject"
+                        onClick={() => handleBookingStatusUpdate(booking.id, 'cancelled')}
+                      >
+                        <span className="material-symbols-rounded">cancel</span>
+                        Reject
+                      </button>
+                    </>
+                  )}
+                  {booking.status === 'confirmed' && (
+                    <button
+                      className="ll-action ll-action-cancel"
+                      onClick={() => handleBookingStatusUpdate(booking.id, 'cancelled')}
+                    >
+                      <span className="material-symbols-rounded">block</span>
+                      Cancel
+                    </button>
+                  )}
+                  {booking.status === 'cancelled' && (
+                    <span className="ll-queue-none">No actions</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
@@ -1371,6 +1436,32 @@ export default function LandlordDashboard() {
   const renderStudents = () => {
     const vacantRooms = rooms.filter((r) => r.status !== 'occupied');
     const filtersActive = studentTypeFilter !== 'all' || studentRoomFilter !== 'all' || Boolean(studentSearch.trim());
+    const unassignedCount = students.filter((s) => !s.room_id).length;
+
+    const renderStudentBanner = () => (
+      <header className="ll-std-banner">
+        <span className="ll-std-banner-icon material-symbols-rounded" aria-hidden="true">groups</span>
+        <div className="ll-std-banner-copy">
+          <strong>Student Roster</strong>
+          <p>Keep visas, contracts and room assignments current for every resident.</p>
+        </div>
+        <span className="ll-std-pill ll-std-count">
+          <i className="material-symbols-rounded" aria-hidden="true">groups</i>
+          {students.length} {students.length === 1 ? 'resident' : 'residents'}
+        </span>
+        {unassignedCount > 0 ? (
+          <span className="ll-std-pill ll-std-unassigned">
+            <i className="material-symbols-rounded" aria-hidden="true">meeting_room</i>
+            {unassignedCount} unassigned
+          </span>
+        ) : (
+          <span className="ll-std-pill ll-std-ok">
+            <i className="material-symbols-rounded" aria-hidden="true">verified</i>
+            All assigned
+          </span>
+        )}
+      </header>
+    );
 
     const renderStudentToolbar = () => (
       <div className="ll-students-toolbar">
@@ -1418,7 +1509,8 @@ export default function LandlordDashboard() {
 
     if (students.length === 0 && filtersActive) {
       return (
-        <>
+        <div className="ll-std">
+          {renderStudentBanner()}
           {renderStudentToolbar()}
           <div className="ll-state">
             <span className="ll-state-icon material-symbols-rounded">search_off</span>
@@ -1433,26 +1525,31 @@ export default function LandlordDashboard() {
               Clear Filters
             </button>
           </div>
-        </>
+        </div>
       );
     }
 
     if (students.length === 0) {
       return (
-        <div className="ll-state">
-          <span className="ll-state-icon material-symbols-rounded">groups</span>
-          <h3>No students registered</h3>
-          <p>Add your students here, then assign them to rooms so occupancy and bills stay in sync.</p>
-          <button className="ll-btn ll-btn-primary" onClick={openAddStudent}>
-            <span className="material-symbols-rounded">add</span>
-            Add Student
-          </button>
+        <div className="ll-std">
+          {renderStudentBanner()}
+          <div className="ll-state">
+            <span className="ll-state-icon material-symbols-rounded">groups</span>
+            <h3>No students registered</h3>
+            <p>Add your students here, then assign them to rooms so occupancy and bills stay in sync.</p>
+            <button className="ll-btn ll-btn-primary" onClick={openAddStudent}>
+              <span className="material-symbols-rounded">add</span>
+              Add Student
+            </button>
+          </div>
         </div>
       );
     }
 
     return (
-      <div className="ll-students">
+      <div className="ll-std">
+        {renderStudentBanner()}
+        <div className="ll-students">
         {renderStudentToolbar()}
 
         <div className="ll-queue ll-students-queue">
@@ -1496,7 +1593,10 @@ export default function LandlordDashboard() {
               </div>
               <div className="ll-queue-room">
                 {student.room_title ? (
-                  <strong className="ll-student-room">{student.room_title}</strong>
+                  <span className="ll-std-room">
+                    <span className="ll-std-room-ic material-symbols-rounded" aria-hidden="true">meeting_room</span>
+                    <strong className="ll-student-room">{student.room_title}</strong>
+                  </span>
                 ) : vacantRooms.length === 0 ? (
                   <span className="ll-queue-none">No rooms available</span>
                 ) : (
@@ -1560,25 +1660,57 @@ export default function LandlordDashboard() {
                   <span className="material-symbols-rounded">delete</span>
                   Delete
                 </button>
-              </div>
+</div>
             </div>
           ))}
+        </div>
         </div>
       </div>
     );
   };
 
   const renderFloors = () => {
+    const totalRooms = floors.reduce((sum, f) => sum + (f.room_count || 0), 0);
+    const occupiedRooms = floors.reduce((sum, f) => sum + (f.occupied_count || 0), 0);
+    const occupancy = totalRooms > 0 ? Math.round((occupiedRooms / totalRooms) * 100) : 0;
+
+    const renderFloorBanner = () => (
+      <header className="ll-fl-banner">
+        <span className="ll-fl-banner-icon material-symbols-rounded" aria-hidden="true">stairs</span>
+        <div className="ll-fl-banner-copy">
+          <strong>Floor Plan</strong>
+          <p>Structure your building floor by floor, then drop each room onto its floor.</p>
+        </div>
+        <span className="ll-fl-pill ll-fl-count">
+          <i className="material-symbols-rounded" aria-hidden="true">stairs</i>
+          {floors.length} {floors.length === 1 ? 'floor' : 'floors'}
+        </span>
+        <span className="ll-fl-pill ll-fl-rooms">
+          <i className="material-symbols-rounded" aria-hidden="true">apartment</i>
+          {totalRooms} rooms
+        </span>
+        {occupancy > 0 && (
+          <span className="ll-fl-pill ll-fl-full">
+            <i className="material-symbols-rounded" aria-hidden="true">domain</i>
+            {occupancy}% occupied
+          </span>
+        )}
+      </header>
+    );
+
     if (floors.length === 0) {
       return (
-        <div className="ll-state">
-          <span className="ll-state-icon material-symbols-rounded">stairs</span>
-          <h3>No floors yet</h3>
-          <p>Structure your building into floors, then attach each room to a floor.</p>
-          <button className="ll-btn ll-btn-primary" onClick={openAddFloor}>
-            <span className="material-symbols-rounded">add</span>
-            Add Floor
-          </button>
+        <div className="ll-fl">
+          {renderFloorBanner()}
+          <div className="ll-state">
+            <span className="ll-state-icon material-symbols-rounded">stairs</span>
+            <h3>No floors yet</h3>
+            <p>Structure your building into floors, then attach each room to a floor.</p>
+            <button className="ll-btn ll-btn-primary" onClick={openAddFloor}>
+              <span className="material-symbols-rounded">add</span>
+              Add Floor
+            </button>
+          </div>
         </div>
       );
     }
@@ -1592,7 +1724,9 @@ export default function LandlordDashboard() {
     };
 
     return (
-      <div className="ll-floors">
+      <div className="ll-fl">
+        {renderFloorBanner()}
+        <div className="ll-floors">
         <div className="ll-floor-toolbar">
           <div className="ll-floor-search">
             <span className="material-symbols-rounded">search</span>
@@ -1630,7 +1764,7 @@ export default function LandlordDashboard() {
                 title={`Work with the rooms on ${floor.label}`}
               >
                 <span className="ll-floor-name">
-                  <span className="material-symbols-rounded">stairs</span>
+                  <span className="ll-floor-name-ic material-symbols-rounded">stairs</span>
                   {floor.label}
                 </span>
                 <div className="ll-floor-stats">
@@ -1638,7 +1772,7 @@ export default function LandlordDashboard() {
                     <strong>{floor.room_count || 0}</strong>
                     <span>Total Rooms</span>
                   </div>
-                  <div className="ll-floor-stat">
+                  <div className="ll-floor-stat ll-floor-stat-occupied">
                     <strong>{floor.occupied_count || 0}</strong>
                     <span>Occupied Rooms</span>
                   </div>
@@ -1665,6 +1799,7 @@ export default function LandlordDashboard() {
             ))}
           </div>
         )}
+        </div>
       </div>
     );
   };
@@ -1687,6 +1822,19 @@ export default function LandlordDashboard() {
       if (view.label === 'Paid') totals.collected += parseFloat(bill.amount) || 0;
       else totals.expected += parseFloat(bill.amount) || 0;
     });
+    const counts = {
+      all: bills.length,
+      issued: bills.filter((bill) => bill.status === 'issued' && !isOverdue(bill)).length,
+      overdue: bills.filter((bill) => bill.status === 'issued' && isOverdue(bill)).length,
+      paid: bills.filter((bill) => bill.status === 'paid').length,
+    };
+    const overdueTot = bills
+      .filter((bill) => bill.status === 'issued' && isOverdue(bill))
+      .reduce((sum, bill) => sum + (parseFloat(bill.amount) || 0), 0);
+    const rate =
+      totals.expected + totals.collected > 0
+        ? Math.round((totals.collected / (totals.expected + totals.collected)) * 100)
+        : 0;
 
     const renderFilter = () => (
       <div className="ll-bills-toolbar">
@@ -1702,9 +1850,11 @@ export default function LandlordDashboard() {
               type="button"
               className={`ll-seg-btn${billStatusFilter === filter.key ? ' active' : ''}`}
               aria-pressed={billStatusFilter === filter.key}
+              data-filter={filter.key}
               onClick={() => setBillStatusFilter(filter.key)}
             >
               {filter.label}
+              {counts[filter.key] > 0 && <span className="ll-seg-count">{counts[filter.key]}</span>}
             </button>
           ))}
         </div>
@@ -1737,20 +1887,46 @@ export default function LandlordDashboard() {
         )}
 
         <div className="ll-bills-summary" aria-label="Expected vs collected">
+          <span className="ll-bills-summary-ic material-symbols-rounded" aria-hidden="true">receipt_long</span>
           <div className="ll-bills-summary-head">
             <strong>Expected vs collected</strong>
-            <small>{visible.length} bill{visible.length === 1 ? '' : 's'} shown</small>
+            <div className="ll-bills-summary-head-row">
+              <small>
+                {visible.length} bill{visible.length === 1 ? '' : 's'} shown
+              </small>
+            </div>
           </div>
           <div className="ll-bills-summary-tiles">
             <div className="ll-bills-summary-tile">
-              <small className="ll-month-label">Expected</small>
-              <strong>{fmtMoney(totals.expected)}</strong>
+              <span className="ll-bill-tile-ic material-symbols-rounded" aria-hidden="true">pending_actions</span>
+              <span className="ll-bill-tile-copy">
+                <small className="ll-month-label">Expected</small>
+                <strong>{fmtMoney(totals.expected)}</strong>
+              </span>
             </div>
             <div className="ll-bills-summary-tile ll-bills-summary-tile-collected">
-              <small className="ll-month-label">Collected</small>
-              <strong>{fmtMoney(totals.collected)}</strong>
+              <span className="ll-bill-tile-ic material-symbols-rounded" aria-hidden="true">payments</span>
+              <span className="ll-bill-tile-copy">
+                <small className="ll-month-label">Collected</small>
+                <strong>{fmtMoney(totals.collected)}</strong>
+              </span>
             </div>
           </div>
+          {visible.length > 0 && (
+            <div
+              className="ll-bills-meter"
+              role="progressbar"
+              aria-label="Collection rate for shown bills"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow={rate}
+            >
+              <span className="ll-bills-meter-track">
+                <span className="ll-bills-meter-fill" style={{ transform: `scaleX(${rate / 100})` }} />
+              </span>
+              <span className="ll-bills-meter-label">{rate}% collected</span>
+            </div>
+          )}
         </div>
 
         {renderFilter()}
@@ -1805,13 +1981,13 @@ export default function LandlordDashboard() {
                       <small>Due {fmtDate(bill.due_date)}</small>
                     </span>
                   </div>
-                  <div className="ll-queue-room">
+                  <div className="ll-queue-room ll-bill-student">
                     <strong>{bill.student_name || 'Not linked'}</strong>
                     {Array.isArray(bill.items) && bill.items.length > 0 && (
                       <small>{bill.items.length} item{bill.items.length === 1 ? '' : 's'}</small>
                     )}
                   </div>
-                  <div className="ll-queue-room">
+                  <div className="ll-queue-room ll-bill-room">
                     <strong>{bill.room_title || 'Not linked'}</strong>
                   </div>
                   <div className="ll-queue-total">
@@ -1959,9 +2135,10 @@ export default function LandlordDashboard() {
         </div>
 
         <div className="ll-fee-summary" aria-label="Expected vs collected">
+          <span className="ll-fee-summary-ic material-symbols-rounded" aria-hidden="true">payments</span>
           <div className="ll-fee-summary-head">
             <strong>Expected vs collected</strong>
-            <small>Across all invoices</small>
+            <small>{fees.length} invoice{fees.length === 1 ? '' : 's'} shown</small>
           </div>
           <div className="ll-fee-summary-tiles">
             {currencyEntries.length === 0 ? (
@@ -1970,12 +2147,18 @@ export default function LandlordDashboard() {
               currencyEntries.map(([cur, totals]) => (
                 <div className="ll-fee-summary-pair" key={cur}>
                   <div className="ll-fee-summary-tile">
-                    <small className="ll-month-label">Expected ({cur})</small>
-                    <strong>{fmtCurrency(totals.expected, cur)}</strong>
+                    <span className="ll-fee-tile-ic material-symbols-rounded" aria-hidden="true">pending_actions</span>
+                    <span className="ll-fee-tile-copy">
+                      <small className="ll-month-label">Expected ({cur})</small>
+                      <strong>{fmtCurrency(totals.expected, cur)}</strong>
+                    </span>
                   </div>
                   <div className="ll-fee-summary-tile ll-fee-summary-tile-collected">
-                    <small className="ll-month-label">Collected ({cur})</small>
-                    <strong>{fmtCurrency(totals.collected, cur)}</strong>
+                    <span className="ll-fee-tile-ic material-symbols-rounded" aria-hidden="true">payments</span>
+                    <span className="ll-fee-tile-copy">
+                      <small className="ll-month-label">Collected ({cur})</small>
+                      <strong>{fmtCurrency(totals.collected, cur)}</strong>
+                    </span>
                   </div>
                 </div>
               ))
@@ -2091,6 +2274,7 @@ export default function LandlordDashboard() {
     if (tab === 'fees') return fees.length;
     return 0;
   };
+  if (!cssReady) return <PageLoader />;
 
   return (
     <>

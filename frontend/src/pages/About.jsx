@@ -13,7 +13,6 @@ import BrandIcon from '../components/BrandIcon.jsx';
 
 export default function About() {
   const cssReady = usePageStylesheet(aboutCssUrl);
-  if (!cssReady) return <PageLoader />;
   const [submitted, setSubmitted] = useState(false);
   const submitTimeoutRef = useRef(null);
   const formRef = useRef(null);
@@ -43,6 +42,8 @@ export default function About() {
       formRef.current?.reset();
     }, 4000);
   };
+
+  if (!cssReady) return <PageLoader />;
 
   return (
     <>

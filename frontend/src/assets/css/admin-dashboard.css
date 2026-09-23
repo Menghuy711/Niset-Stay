@@ -2065,13 +2065,14 @@ body {
 .admin-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(7, 24, 51, 0.55);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   padding: 24px;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .admin-modal {
@@ -2859,4 +2860,815 @@ body {
 .admin-settings a:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+/* ============================================
+   ROOM MODAL — THE OPERATOR'S ROOM DESK
+   Premium redesign of AdminRoomModal, shared by
+   the Admin and Landlord dashboards. Every rule
+   is scoped under .admin-room-crud-modal (the
+   Add/Edit Room modal) so the sibling wide modals
+   (bills, floors, assign, fees) keep their own
+   styling untouched.
+   ============================================ */
+
+.admin-room-modal-overlay {
+  --rm-blue: var(--color-primary, #1B61CC);
+  --rm-cyan: var(--color-cyan, #21FFFF);
+  --rm-midnight: var(--color-midnight, #071833);
+  --rm-paper: var(--color-paper, #FAFCFF);
+  --rm-cloud: var(--color-cloud, #F2F5FA);
+  --rm-mist: var(--color-mist, #E9ECF2);
+  --rm-fog: var(--color-fog, #DADFE5);
+  --rm-stone: var(--color-stone, #797C80);
+  --rm-slate: var(--color-slate, #616366);
+  --rm-ink: var(--color-ink, #303133);
+  --rm-error: var(--color-error, #FF2134);
+  --rm-error-soft: #FDECEE;
+  --rm-success: #16A34A;
+  --rm-success-soft: #E7F6EC;
+  --rm-ease: cubic-bezier(0, 0.7, 0.3, 1);
+  animation: arm-fade-in 0.25s ease-out;
+}
+
+@keyframes arm-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.admin-room-crud-modal {
+  --rm-blue: var(--color-primary, #1B61CC);
+  --rm-cyan: var(--color-cyan, #21FFFF);
+  --rm-midnight: var(--color-midnight, #071833);
+  --rm-paper: var(--color-paper, #FAFCFF);
+  --rm-cloud: var(--color-cloud, #F2F5FA);
+  --rm-mist: var(--color-mist, #E9ECF2);
+  --rm-fog: var(--color-fog, #DADFE5);
+  --rm-stone: var(--color-stone, #797C80);
+  --rm-slate: var(--color-slate, #616366);
+  --rm-ink: var(--color-ink, #303133);
+  --rm-error: var(--color-error, #FF2134);
+  --rm-error-soft: #FDECEE;
+  --rm-success: #16A34A;
+  --rm-success-soft: #E7F6EC;
+  --rm-ease: cubic-bezier(0, 0.7, 0.3, 1);
+  max-width: 780px;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(7, 24, 51, 0.35);
+  background: #ffffff;
+  animation: arm-rise 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes arm-rise {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.admin-room-crud-modal ::selection {
+  background: rgba(27, 97, 204, 0.18);
+}
+
+/* Header — the navy anchor */
+.admin-room-crud-modal .admin-modal-header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, #1B61CC 0%, #071833 110%);
+  color: #ffffff;
+  flex-shrink: 0;
+  border-bottom: none;
+}
+
+/* faint identity glow watermark */
+.admin-room-crud-modal .admin-modal-header::after {
+  content: '';
+  position: absolute;
+  right: -40px;
+  bottom: -70px;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+
+.admin-room-crud-modal .admin-modal-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.arm-identity {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-size: 26px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.arm-title-group {
+  min-width: 0;
+}
+
+.admin-room-crud-modal .admin-modal-header h2 {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  display: block;
+}
+
+/* remove the legacy 4px blue accent bar from the old header */
+.admin-room-crud-modal .admin-modal-header h2::before {
+  content: none;
+  display: inline-block;
+  width: auto;
+  height: auto;
+  background: none;
+}
+
+/* cyan signature spark under the title */
+.admin-room-crud-modal .admin-modal-header h2::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--rm-cyan);
+  margin-top: 8px;
+}
+
+.arm-header-sub {
+  margin: 6px 0 0;
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.45;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-room-crud-modal .admin-modal-close {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.14);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s var(--rm-ease), transform 0.25s var(--rm-ease);
+  flex-shrink: 0;
+}
+
+.admin-room-crud-modal .admin-modal-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: rotate(90deg);
+}
+
+/* Error banner */
+.admin-room-crud-modal > .admin-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 24px 32px 0;
+  padding: 12px 16px;
+  background: var(--rm-error-soft);
+  color: var(--rm-error);
+  font-size: 1.3rem;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+.admin-room-crud-modal > .admin-error i {
+  font-size: 18px;
+  margin-top: 1px;
+}
+
+/* Body */
+.admin-room-crud-modal .admin-form-content {
+  padding: 28px 32px 40px;
+  background: var(--rm-paper);
+  overflow-y: auto;
+}
+
+.admin-room-crud-modal .admin-form-content::-webkit-scrollbar {
+  width: 8px;
+}
+.admin-room-crud-modal .admin-form-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-room-crud-modal .admin-form-content::-webkit-scrollbar-thumb {
+  background-color: var(--rm-stone);
+  border-radius: 4px;
+}
+.admin-room-crud-modal .admin-form-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--rm-slate);
+}
+
+/* Sections */
+.admin-room-crud-modal .admin-section {
+  margin: 0;
+  padding: 24px 0;
+}
+
+.admin-room-crud-modal .admin-section + .admin-section {
+  border-top: 1px solid var(--rm-fog);
+  border-bottom: none;
+}
+
+.admin-room-crud-modal .admin-section:last-child {
+  border-bottom: none;
+}
+
+.admin-room-crud-modal .admin-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.admin-room-crud-modal .admin-section-header i {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: var(--rm-mist);
+  color: var(--rm-blue);
+  border-radius: 10px;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.admin-room-crud-modal .admin-section-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--rm-ink);
+}
+
+/* Grids */
+.admin-room-crud-modal .admin-form-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  margin-bottom: 20px;
+}
+
+.admin-room-crud-modal .admin-form-grid-three-column {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px 24px;
+  margin-bottom: 20px;
+}
+
+.admin-room-crud-modal .admin-form-grid:last-child,
+.admin-room-crud-modal .admin-form-grid-three-column:last-child {
+  margin-bottom: 0;
+}
+
+/* Groups and labels */
+.admin-room-crud-modal .admin-form-group {
+  gap: 7px;
+  margin-bottom: 20px;
+}
+
+.admin-room-crud-modal .admin-form-group:last-child {
+  margin-bottom: 0;
+}
+
+.admin-room-crud-modal .admin-form-grid .admin-form-group,
+.admin-room-crud-modal .admin-form-grid-three-column .admin-form-group {
+  margin-bottom: 0;
+}
+
+.admin-room-crud-modal .admin-form-group > label {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--rm-ink);
+}
+
+.admin-room-crud-modal .admin-required {
+  color: var(--rm-error);
+}
+
+/* Inputs */
+.admin-room-crud-modal .admin-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.admin-room-crud-modal .admin-input-wrapper > i {
+  position: absolute;
+  left: 14px;
+  color: var(--rm-slate);
+  font-size: 19px;
+  pointer-events: none;
+}
+
+.admin-room-crud-modal .admin-input,
+.admin-room-crud-modal .admin-textarea {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 1.5px solid var(--rm-fog);
+  border-radius: 12px;
+  font-size: 1.4rem;
+  font-family: inherit;
+  color: var(--rm-ink);
+  background: #ffffff;
+  caret-color: var(--rm-blue);
+  transition: border-color 0.2s var(--rm-ease), box-shadow 0.2s var(--rm-ease);
+}
+
+.admin-room-crud-modal select.admin-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23797C80' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  padding-right: 34px;
+}
+
+.admin-room-crud-modal .admin-input::placeholder,
+.admin-room-crud-modal .admin-textarea::placeholder {
+  color: var(--rm-slate);
+}
+
+.admin-room-crud-modal .admin-input-wrapper .admin-input {
+  padding-left: 44px;
+}
+
+.admin-room-crud-modal .admin-input:hover,
+.admin-room-crud-modal .admin-textarea:hover {
+  border-color: var(--rm-stone);
+}
+
+.admin-room-crud-modal .admin-input:focus,
+.admin-room-crud-modal .admin-textarea:focus {
+  outline: none;
+  border-color: var(--rm-blue);
+  box-shadow: 0 0 0 4px rgba(27, 97, 204, 0.12);
+}
+
+.admin-room-crud-modal .admin-textarea {
+  height: auto;
+  min-height: 100px;
+  padding: 12px 16px;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.admin-room-crud-modal .admin-hint {
+  margin: 3px 0 0;
+  font-size: 1.2rem;
+  color: var(--rm-slate);
+  line-height: 1.45;
+}
+
+/* Map link inline notices */
+.admin-room-crud-modal .admin-form-group .admin-error,
+.admin-room-crud-modal .admin-form-group .admin-success {
+  margin: 8px 0 0;
+  padding: 10px 14px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.45;
+  border-radius: 10px;
+}
+
+.admin-room-crud-modal .admin-form-group .admin-error {
+  background: var(--rm-error-soft);
+  color: var(--rm-error);
+}
+
+.admin-room-crud-modal .admin-form-group .admin-success {
+  background: var(--rm-success-soft);
+  color: var(--rm-success);
+}
+
+/* Amenities */
+.admin-room-crud-modal .admin-amenities-grid {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.admin-room-crud-modal .admin-amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--rm-fog);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--rm-ink);
+  background: #ffffff;
+  transition: border-color 0.2s var(--rm-ease), background 0.2s var(--rm-ease);
+  user-select: none;
+}
+
+.admin-room-crud-modal .admin-amenity-item:hover {
+  border-color: var(--rm-stone);
+  background: var(--rm-cloud);
+}
+
+.admin-room-crud-modal .admin-amenity-item.selected {
+  border-color: var(--rm-blue);
+  background: rgba(27, 97, 204, 0.07);
+  color: var(--rm-blue);
+}
+
+.admin-room-crud-modal .admin-amenity-check {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--rm-fog);
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  color: transparent;
+  font-size: 16px;
+  flex-shrink: 0;
+  background: #ffffff;
+  transition: background 0.15s var(--rm-ease), border-color 0.15s var(--rm-ease), color 0.15s var(--rm-ease);
+}
+
+.admin-room-crud-modal .admin-amenity-item.selected .admin-amenity-check {
+  background: var(--rm-blue);
+  border-color: var(--rm-blue);
+  color: #ffffff;
+}
+
+/* Image upload sheet */
+.admin-room-crud-modal .admin-upload-hint {
+  margin: 0 0 14px;
+  font-size: 1.2rem;
+  color: var(--rm-slate);
+  line-height: 1.45;
+}
+
+.admin-room-crud-modal .admin-images-grid {
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 12px;
+}
+
+.admin-room-crud-modal .admin-image-tile {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--rm-fog);
+  background: var(--rm-cloud);
+}
+
+.admin-room-crud-modal .admin-image-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-room-crud-modal .admin-image-cover-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--rm-blue);
+  color: var(--rm-paper);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(7, 24, 51, 0.3);
+}
+
+.admin-room-crud-modal .admin-image-tile-actions {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 24, 51, 0.45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s var(--rm-ease);
+  z-index: 1;
+}
+
+.admin-room-crud-modal .admin-image-tile:hover .admin-image-tile-actions,
+.admin-room-crud-modal .admin-image-tile:focus-within .admin-image-tile-actions {
+  opacity: 1;
+}
+
+.admin-room-crud-modal .admin-image-tile-btn {
+  background: #ffffff;
+  color: var(--rm-ink);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.2s var(--rm-ease), color 0.2s var(--rm-ease), transform 0.2s var(--rm-ease);
+}
+
+.admin-room-crud-modal .admin-image-tile-btn:hover {
+  background: var(--rm-blue);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.admin-room-crud-modal .admin-image-tile-btn-danger:hover {
+  background: var(--rm-error);
+  color: #ffffff;
+}
+
+.admin-room-crud-modal .admin-add-image-tile {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border: 2px dashed var(--rm-stone);
+  border-radius: 14px;
+  background: var(--rm-paper);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--rm-ink);
+  transition: border-color 0.2s var(--rm-ease), background 0.2s var(--rm-ease);
+}
+
+.admin-room-crud-modal .admin-add-image-tile:hover,
+.admin-room-crud-modal .admin-add-image-tile.dragging {
+  border-color: var(--rm-blue);
+  background: var(--rm-cloud);
+}
+
+.admin-room-crud-modal .admin-add-image-tile > i {
+  font-size: 22px;
+  color: var(--rm-blue);
+  background: rgba(27, 97, 204, 0.12);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.admin-room-crud-modal .admin-add-image-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0 6px;
+}
+
+.admin-room-crud-modal .admin-upload-sublabel {
+  font-size: 1.1rem;
+  color: var(--rm-slate);
+}
+
+.admin-room-crud-modal .admin-upload-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--rm-blue);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+/* Footer */
+.admin-room-crud-modal .admin-modal-footer {
+  padding: 20px 32px;
+  background: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  position: static;
+}
+
+.arm-footer-hint {
+  font-size: 1.2rem;
+  color: var(--rm-slate);
+  margin: 0;
+}
+
+.arm-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-room-crud-modal .admin-btn-secondary {
+  background: transparent;
+  color: var(--rm-ink);
+  border: 1.5px solid var(--rm-fog);
+  padding: 0 22px;
+  height: 46px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 1.4rem;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: border-color 0.2s var(--rm-ease), background 0.2s var(--rm-ease);
+}
+
+.admin-room-crud-modal .admin-btn-secondary:hover {
+  border-color: var(--rm-stone);
+  background: var(--rm-mist);
+}
+
+.admin-room-crud-modal .admin-btn-primary {
+  background: var(--rm-blue);
+  color: #ffffff;
+  border: none;
+  padding: 0 26px;
+  height: 46px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 1.4rem;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(27, 97, 204, 0.25);
+  transition: background 0.2s var(--rm-ease), box-shadow 0.2s var(--rm-ease), transform 0.2s var(--rm-ease);
+}
+
+.admin-room-crud-modal .admin-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(27, 97, 204, 0.35);
+  background: #1755b2;
+}
+
+.admin-room-crud-modal .admin-btn-primary:disabled {
+  background: var(--rm-stone);
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+.admin-room-crud-modal .admin-btn-loading,
+.admin-room-crud-modal .admin-btn-primary span,
+.admin-room-crud-modal .admin-btn-secondary span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Focus visibility */
+.admin-room-crud-modal .admin-input:focus-visible,
+.admin-room-crud-modal .admin-textarea:focus-visible,
+.admin-room-crud-modal .admin-modal-close:focus-visible,
+.admin-room-crud-modal .admin-btn-secondary:focus-visible,
+.admin-room-crud-modal .admin-btn-primary:focus-visible,
+.admin-room-crud-modal .admin-add-image-tile:focus-visible,
+.admin-room-crud-modal .admin-image-tile-btn:focus-visible {
+  outline: 2px solid var(--rm-blue);
+  outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .admin-room-crud-modal {
+    max-width: 720px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-room-crud-modal .admin-form-grid-three-column {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-room-modal-overlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .admin-room-crud-modal {
+    max-width: 100%;
+    max-height: 94vh;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .admin-room-crud-modal .admin-modal-header {
+    padding: 22px 20px;
+  }
+
+  .admin-room-crud-modal .admin-modal-header-content {
+    gap: 12px;
+  }
+
+  .arm-identity {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    font-size: 22px;
+  }
+
+  .admin-room-crud-modal .admin-modal-header h2 {
+    font-size: 1.9rem;
+  }
+
+  .arm-header-sub {
+    white-space: normal;
+  }
+
+  .admin-room-crud-modal > .admin-error {
+    margin: 16px 20px 0;
+  }
+
+  .admin-room-crud-modal .admin-form-content {
+    padding: 20px;
+  }
+
+  .admin-room-crud-modal .admin-section {
+    padding: 20px 0;
+  }
+
+  .admin-room-crud-modal .admin-section-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .admin-room-crud-modal .admin-form-grid,
+  .admin-room-crud-modal .admin-form-grid-three-column {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .admin-room-crud-modal .admin-amenities-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-room-crud-modal .admin-images-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-room-crud-modal .admin-modal-footer {
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .arm-footer-hint {
+    display: none;
+  }
+
+  .arm-footer-actions {
+    width: 100%;
+  }
+
+  .arm-footer-actions .admin-btn-secondary,
+  .arm-footer-actions .admin-btn-primary {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-room-modal-overlay,
+  .admin-room-crud-modal,
+  .admin-room-crud-modal .admin-modal-close,
+  .admin-room-crud-modal .admin-input,
+  .admin-room-crud-modal .admin-textarea,
+  .admin-room-crud-modal .admin-btn-secondary,
+  .admin-room-crud-modal .admin-btn-primary,
+  .admin-room-crud-modal .admin-image-tile-btn {
+    animation: none;
+    transition-duration: 0.01ms;
+  }
 }

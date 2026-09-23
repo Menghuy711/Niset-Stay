@@ -231,10 +231,9 @@ test('management fees: per-room view, paid-delete guard, and cancel', async ({ p
     });
     feeBId = (await feeB2Res.json()).id;
 
-    // Room card → fees page filters the list to that room only.
-    await page.getByRole('tab', { name: 'Listings' }).click();
-    const roomCardB = page.locator('.ll-prop', { hasText: 'E2E Fee Room B' });
-    await roomCardB.locator('.ll-prop-action.ll-fees').click();
+    // Room filter on the Mgmt Fees tab scopes the list to that room only.
+    await page.getByRole('tab', { name: 'Mgmt Fees' }).click();
+    await page.getByLabel('Filter fees by room').selectOption({ label: 'E2E Fee Room B' });
     await expect(page).toHaveURL(/\/landlord/);
     const chip = page.locator('.ll-filter-chip', { hasText: 'E2E Fee Room B' });
     await expect(chip).toBeVisible();

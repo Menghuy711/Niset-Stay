@@ -21,7 +21,6 @@ function formatDate(value) {
 
 export default function RoomDetail() {
   const cssReady = usePageStylesheet(roomDetailCssUrl);
-  if (!cssReady) return <PageLoader />;
   const { id } = useParams();
   const navigate = useNavigate();
   const [roomData, setRoomData] = useState(null);

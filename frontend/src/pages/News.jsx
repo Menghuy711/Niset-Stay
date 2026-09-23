@@ -22,7 +22,6 @@ const FILTERS = [
 
 export default function News() {
   const cssReady = usePageStylesheet(newsCssUrl);
-  if (!cssReady) return <PageLoader />;
 
   const [searchParams, setSearchParams] = useSearchParams();
   // Category lives in the URL (?cat=...) so category/tag links from the detail
@@ -57,6 +56,8 @@ export default function News() {
     }
     return map;
   }, []);
+
+  if (!cssReady) return <PageLoader />;
 
   return (
     <>

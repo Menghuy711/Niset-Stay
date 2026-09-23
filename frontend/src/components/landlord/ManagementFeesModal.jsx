@@ -117,9 +117,10 @@ export default function ManagementFeesModal({ rooms, initialRoomId, onSave, onCl
 
   return (
     <div className="admin-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="admin-modal admin-room-modal admin-modal-wide" role="dialog" aria-modal="true" aria-labelledby="ll-mf-modal-title" ref={modalRef}>
+      <div className="admin-modal admin-room-modal admin-modal-wide ll-mf-modal" role="dialog" aria-modal="true" aria-labelledby="ll-mf-modal-title" ref={modalRef}>
         <div className="admin-modal-header">
           <div className="admin-modal-header-content">
+            <span className="ll-mf-title-ic material-symbols-rounded" aria-hidden="true">request_quote</span>
             <h2 id="ll-mf-modal-title">Create Management Fee</h2>
           </div>
           <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Close modal">

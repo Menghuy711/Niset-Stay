@@ -19,7 +19,6 @@ function formatDate(value, fallback = '—') {
 
 export default function MyBookings() {
   const cssReady = usePageStylesheet(myBookingsCssUrl);
-  if (!cssReady) return <PageLoader />;
 
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -49,7 +48,7 @@ export default function MyBookings() {
         if (err.status === 401) {
           setError('Your session has expired. Please sign in again.');
         } else {
-          setError(err.message || 'Failed to load bookings.');
+          setError(err?.message || 'Failed to load bookings.');
         }
       } finally {
         setLoading(false);
@@ -58,6 +57,8 @@ export default function MyBookings() {
 
     fetchBookings();
   }, [user]);
+
+  if (!cssReady) return <PageLoader />;
 
   const renderStatusBadge = (status) => {
     const s = (status || 'pending').toLowerCase();

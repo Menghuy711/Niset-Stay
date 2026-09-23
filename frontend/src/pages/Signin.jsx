@@ -30,7 +30,6 @@ function landingPath(role) {
 
 export default function Signin() {
   const cssReady = usePageStylesheet(signinCssUrl);
-  if (!cssReady) return <PageLoader />;
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
 
@@ -166,6 +165,7 @@ export default function Signin() {
       setRegisterLoading(false);
     }
   };
+  if (!cssReady) return <PageLoader />;
 
   return (
     <>

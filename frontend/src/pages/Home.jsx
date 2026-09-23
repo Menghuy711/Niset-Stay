@@ -16,8 +16,6 @@ import bgPattern from '../assets/images/bg-pattern.png';
 export default function Home() {
   const cssReady = usePageStylesheet(styleCssUrl);
   const { role } = useAuth();
-
-  if (!cssReady) return <PageLoader />;
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -59,6 +57,8 @@ export default function Home() {
     fetchFeaturedRooms();
     return () => { mounted = false; };
   }, []);
+
+  if (!cssReady) return <PageLoader />;
 
   const propertyListClass = 'property-list' + (loading || error ? ' is-none' : '');
 

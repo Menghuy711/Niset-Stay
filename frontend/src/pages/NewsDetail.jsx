@@ -31,7 +31,6 @@ function shareLink(key, title, url) {
 
 export default function NewsDetail() {
   const cssReady = usePageStylesheet(newsDetailCssUrl);
-  if (!cssReady) return <PageLoader />;
 
   const { id } = useParams();
   const article = newsData.find((n) => String(n.id) === id) ?? null;
@@ -62,6 +61,8 @@ export default function NewsDetail() {
     .join('')
     .slice(0, 2)
     .toUpperCase() || 'NS';
+
+  if (!cssReady) return <PageLoader />;
 
   if (!article) {
     return (

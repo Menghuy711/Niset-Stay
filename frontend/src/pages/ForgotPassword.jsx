@@ -10,7 +10,6 @@ import { api } from '../lib/api';
 
 export default function ForgotPassword() {
   const cssReady = usePageStylesheet(signinCssUrl);
-  if (!cssReady) return <PageLoader />;
 
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -39,11 +38,13 @@ export default function ForgotPassword() {
       }
       setSent(true);
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      setError(err?.message || 'Failed to send reset link. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+
+  if (!cssReady) return <PageLoader />;
 
   return (
     <>

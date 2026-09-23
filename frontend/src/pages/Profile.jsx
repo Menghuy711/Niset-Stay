@@ -33,7 +33,6 @@ const ROLE_LABEL = {
 
 export default function Profile() {
   const cssReady = usePageStylesheet(profileCssUrl);
-  if (!cssReady) return <PageLoader />;
 
   const { user, loading: authLoading, signOut, refreshUser } = useAuth();
   const navigate = useNavigate();
@@ -116,6 +115,7 @@ export default function Profile() {
   }, [user]);
 
   const initials = getInitials(user?.full_name || user?.email);
+  if (!cssReady) return <PageLoader />;
 
   const openAvatarPicker = () => {
     const label = user?.full_name || user?.email;
