@@ -1,3 +1,28 @@
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+
+@theme {
+  /* Tailwind utility palette, mapped to the app tokens (admin-dashboard.css
+     :root). Same names + values => co-exists with hand-written per-page CSS.
+     Preflight is intentionally NOT loaded so browser defaults (which the
+     existing bespoke CSS targets) are left untouched. */
+  --color-primary: #1B61CC;
+  --color-primary-deep: #0F4692;
+  --color-navy: #0D3166;
+  --color-midnight: #071833;
+  --color-teal: #0E9488;
+  --color-paper: #FAFCFF;
+  --color-cloud: #F2F5FA;
+  --color-mist: #E9ECF2;
+  --color-fog: #DADFE5;
+  --color-slate: #616366;
+  --color-graphite: #494A4D;
+  --color-ink: #303133;
+  --color-coal: #18191A;
+  --color-danger: #C01321;
+  --font-sans: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+}
+
 /* Shared icon + loading utilities (loaded globally via main.jsx). */
 
 .material-symbols-rounded {
